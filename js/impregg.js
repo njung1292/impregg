@@ -13,5 +13,6 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
     }
 
     IMPREGG.init(); //initialize the app
+    IMPREGG.PAN.init();
 
 })(jQuery, window, document);
