@@ -7,11 +7,10 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
             this.setVars();
             this.bindEvents();
 
-            var circle = new Path.Circle({
-             center: view.center,
-             radius: 250,
-             strokeColor: 'black'
-            });
+            this.drawShellEnclosure();
+
+
+            // this.drawCircle();
         },
 
         setVars: function() {
@@ -20,9 +19,27 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 
         bindEvents: function() {
             // set event listeners for your functions here
-            $(document).on('click', function() {
-                console.log('example!');
+            // $(document).on('click', function() {
+            //     console.log('example!');
+            // });
+            $('#myCanvas').on('click', function() {
+                console.log('clicking on canvas!');
             });
+        },
+
+        drawShellEnclosure: function() {
+            $('#myCanvas').on('click', function() {
+                console.log('clicking on canvas!');
+            });
+        },
+
+        drawCircle: function() {
+            var circle = new Path.Circle({
+             center: view.center,
+             radius: 50,
+             strokeColor: 'red'
+            });
+            circle.fillColor = 'red';
         },
 
         // the rest of your functions go here
@@ -35,3 +52,16 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
     //SPLASH.init();
 
 })(jQuery, window, document);
+
+
+
+
+
+
+
+
+
+
+
+
+
