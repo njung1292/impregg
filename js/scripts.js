@@ -8,3 +8,10 @@ path.moveTo(start);
 // Note the plus operator on Point objects.
 // PaperScript does that for us, and much more!
 path.lineTo(start + [ 100, -50 ]);
+
+var testPath = Project.importJSON(('["Path", {"pathData":"M261.093,52.608c0,0-112.494-65.997-137.993,28.499
+	s44.998,59.997,41.998,119.994c-3,59.997,64.497,65.997,64.497,65.997s76.496,17.999,104.995-37.498s64.497-35.998,64.497-35.998
+	s76.496,28.499,43.498-55.497s-65.997-100.495-89.995-92.995C328.589,52.608,296.87,68.132,261.093,52.608z"}'));
+path.strokeColor = 'black';
+var start1 = new Point (300, 400);
+path.moveTo(start);
