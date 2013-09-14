@@ -6,6 +6,12 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         init: function() {
             this.setVars();
             this.bindEvents();
+
+            var circle = new Path.Circle({
+             center: view.center,
+             radius: 250,
+             strokeColor: 'black'
+            });
         },
 
         setVars: function() {
@@ -26,6 +32,6 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
     }
 
     //uncomment this to test;
-    SPLASH.init();
+    //SPLASH.init();
 
 })(jQuery, window, document);
