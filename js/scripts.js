@@ -15,3 +15,20 @@ var testPath = Project.importJSON(('["Path", {"pathData":"M261.093,52.608c0,0-11
 path.strokeColor = 'black';
 var start1 = new Point (300, 400);
 path.moveTo(start);
+
+// Create a circle shaped path with its center at the center
+// of the view and a radius of 30:
+var path = new Path.Circle({
+	center: view.center,
+	radius: 250,
+	strokeColor: 'black'
+});
+
+//var path = new Path.Circle(view.bounds.center, 30);
+path.fillColor = 'red';
+
+function onResize(event) {
+	// Whenever the window is resized, recenter the path:
+	path.position = view.center;
+}
+
