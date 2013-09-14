@@ -2,7 +2,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 
 (function($, window, document, undefined) {
   
-    var EXAMPLE = IMPREGG.EXAMPLE = { //this is your js object
+    var SPLASH = IMPREGG.SPLASH = { //this is your js object
         init: function() {
             this.setVars();
             this.bindEvents();
@@ -26,6 +26,6 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
     }
 
     //uncomment this to test;
-    //EXAMPLE.init();
+    SPLASH.init();
 
 })(jQuery, window, document);
