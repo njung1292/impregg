@@ -27,6 +27,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         bloop: "bloop"
     }
     var instanceOfBlah = new Blah(config);
+    instanceOfBlah.logBloopAndBluup();
 
 })(jQuery, window, document);
 
