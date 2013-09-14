@@ -63,3 +63,21 @@ a img {
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block;
 }
+
+/* line 6, ../sass/style.scss */
+body {
+  margin: 0 auto;
+}
+
+/* line 10, ../sass/style.scss */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* line 14, ../sass/style.scss */
+canvas {
+  width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  background-color: #333;
+}
