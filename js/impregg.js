@@ -8,7 +8,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         //uncomment when we want to initialize these forreal
         //this.PAN.init(); 
 
-        this.SPLASH.init();
+        // this.SPLASH.init();
         //this.PAN.init():
     }
 
