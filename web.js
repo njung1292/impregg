@@ -17,8 +17,6 @@ var allowCrossDomain = function(req, res, next) {
 app.configure(function(){
   app.set('port', process.env.PORT || 9292);
   app.set('/', __dirname);
-  app.use(express.favicon());
-  app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(allowCrossDomain);
@@ -26,8 +24,6 @@ app.configure(function(){
   app.use("/", express.static(__dirname));
   app.use(express.errorHandler());
 });
-
-app.get("/", function(req, res) { res.redirect("/index.html");});
 
 var server = http.createServer(app);
 
