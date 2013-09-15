@@ -84,6 +84,7 @@ canvas {
 
 /* line 28, ../sass/style.scss */
 #pepper {
+  cursor: pointer;
   width: 100px;
   height: 180px;
   position: absolute;
@@ -95,7 +96,21 @@ canvas {
   background-image: url('../../images/pepper-small.png?1379252499');
 }
 
-/* line 53, ../sass/style.scss */
+/* line 41, ../sass/style.scss */
+#salt {
+  cursor: pointer;
+  width: 100px;
+  height: 177px;
+  position: absolute;
+  right: 50px;
+  bottom: 100px;
+}
+/* line 49, ../sass/style.scss */
+#salt.shown {
+  background-image: url('../../images/salt-small.png?1379253552');
+}
+
+/* line 62, ../sass/style.scss */
 #shell-enclosure {
   width: 100%;
   height: 100%;

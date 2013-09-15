@@ -26,7 +26,7 @@ canvas {
 }
 
 #pepper {
-	
+	cursor: pointer;
 	width: 100px;
 	height: 180px;
 	position: absolute;
@@ -39,7 +39,16 @@ canvas {
 }
 
 #salt {
+	cursor: pointer;
+	width: 100px;
+	height: 177px;
+	position: absolute;
+	right: 50px;
+	bottom: 100px;
 
+	&.shown {
+		background-image: image-url('salt-small.png');
+	}
 }
 
 // #myCanvas {

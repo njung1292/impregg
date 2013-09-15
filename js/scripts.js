@@ -397,11 +397,21 @@ lastChunkCracked.done(function() {
 
 
 	$('#salt').on('click', function() {
-		saltSelected = true ? false : true;
+		if (saltSelected) {
+			saltSelected = false;
+		} else {
+			saltSelected = true;
+			pepperSelected = false;
+		}
 	});
 
 	$('#pepper').on('click', function() {
-		pepperSelected = true ? false : true;
+		if (pepperSelected) {
+			pepperSelected = false;
+		} else {
+			pepperSelected = true;
+			saltSelected = false;
+		}
 	});
 
 	var timeToWaitBeforeTadpolesPopup = 7000;
@@ -513,8 +523,12 @@ function onMouseDown(event) {
 
 		if (saltSelected) {
 			displaySalt(event);
-		} else if (pepperSelected) {
+			console.log('displaying salt');
+		}
+
+		if (pepperSelected) {
 			displayPepper(event);
+			console.log('displaying pepper');
 		}
 	} 
 
