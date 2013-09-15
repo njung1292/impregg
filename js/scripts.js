@@ -1,6 +1,8 @@
 var unveiled = false;
 var startEggAnimation = false;
 var startEggMouseDown = false;
+var saltSelected = false;
+var pepperSelected = false;
 
 
 var panRad = (view.size.height /2) -10;
@@ -402,7 +404,7 @@ function displaySalt(event) {
         var point = new Point(position.x + randomInt(-11, 11), position.y + randomInt(-11, 11));
         var size = new Size(3, 3);
         var square = new Shape.Rectangle(point, size);
-        square.fillColor = 'white';
+        square.fillColor = '#fff';
         setTimeout(function() {
             square.remove();
         }, randomInt(1000, 2000));
@@ -425,10 +427,9 @@ function displayPepper(event) {
 function onMouseDown(event) {
 
     
-    var position = event.point;
-	boids.push(new Boid(position, 10, 0.05));
-    displaySalt(event);
-    displayPepper(event);
+ //    var position = event.point;
+	// boids.push(new Boid(position, 10, 0.05));
+    
 
 	if (unveiled && startEggMouseDown) {
 	 //    var position = event.point;
@@ -436,6 +437,12 @@ function onMouseDown(event) {
 		var touchedYolk = IMPREGG.EGG.pushYolk(event.point);
 		if (touchedYolk) {
 			$('.dying2-sound')[0].play();
+		}
+
+		if (saltSelected) {
+			displaySalt(event);
+		} else if (pepperSelected) {
+			displayPepper(event);
 		}
 	} 
 
@@ -634,6 +641,13 @@ var unveilPan = function() {
 	// }
 	//shell.remove();
 
+	$('#salt').on('click', function() {
+		saltSelected = true;
+	});
+
+	$('#pepper').on('click', function() {
+		pepperSelected = true;
+	});
 
 	var hasBeenSeen = false;
 	for (var i = 0; i < shell.length; i++) (function(n) {
