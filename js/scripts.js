@@ -449,12 +449,9 @@ var drawCracks = function() {
 		cracks.push(path);
 	}
 
-
-	// var p1 = new Point(centerX - 30, centerY - 30);
-	// var p2 = new Point(centerX + 30, centerY + 30);
-	
-	// var path = new Path.Line(p1, p2);
-	// path.strokeColor = '#fff';
+	var trackNumber = randomInt(1,8);
+	var name = '.crack'+trackNumber+'-sound';
+	$(name)[0].play();
 }
 
 var unveilPan = function() {
@@ -462,6 +459,8 @@ var unveilPan = function() {
 		cracks[i].remove();
 	}
 	shell.remove();
+	$('.what-the-sound')[0].play();
+	$('.real-alien-sound')[0].play();
 }
 
 
