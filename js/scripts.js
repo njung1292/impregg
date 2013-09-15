@@ -28,11 +28,13 @@ var drawShell = function() {
 
 
 var drawCracks = function() {
+	console.log(event.pageX, event.pageY);
 	var initialX = event.pageX;
 	var initialY = event.pageY;
 
 	var numPoints = randomInt(3,14);
-	
+	console.log(numPoints);
+
 	var points = [];
 	var centerX = initialX;
 	var centerY = initialY;
@@ -73,6 +75,7 @@ var unveilPan = function() {
 
 drawShell();
 
+console.log(view.size.width);
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -208,9 +211,9 @@ var Boid = Base.extend({
 	flock: function(boids) {
 		this.calculateDistances(boids);
 		var separation = this.separate(boids) * 2;
-		var alignment = this.align(boids);	
+		// var alignment = this.align(boids);	
 		var cohesion = this.cohesion(boids);
-		this.acceleration += cohesion + separation + alignment; //+ alignment + separation
+		this.acceleration += cohesion + separation; //+ alignment + separation
 	},
 
 	calculateDistances: function(boids) {
@@ -278,7 +281,7 @@ var Boid = Base.extend({
 	// Takes a second argument, if true, it slows down as it approaches
 	// the target
 	steer: function(target, slowdown) {
-		// slowdown = true;	
+		slowdown = true;
 		var steer,
 			desired = view.center - this.position;
 		var distance = desired.length;
@@ -383,6 +386,7 @@ var heartPath = Project.importJSON('["Path",{"pathData":"M514.69629,624.70313c-7
 var pathLength = heartPath.length;
 
 var boids = [];
+var colors = ["#EC6363", "#BDEBCA", "#D7F0D3", "#A1DBDD", "#FEE58C", "#FF703F", "white"];
 var groupTogether = false;
 
 // Add the boids:
@@ -430,9 +434,9 @@ function onResize(event) {
 }
 
 function onMouseDown(event) {
-    
     var position = event.point;
 	boids.push(new Boid(position, 10, 0.05));
+	seek(event.point);
 }
 
 
