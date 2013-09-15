@@ -74,23 +74,22 @@ var unveilPan = function() {
 drawShell();
 
 
-//////////////
-
+////////////////////////////////////////////////////////////////////////////////////////////
 
 var panRad = (view.size.height /2) -10;
 // The pan is a circle
 var pan = new Path.Circle({
 	center: view.center,
 	radius: (view.size.height /2)-10,
-	strokeColor: '#62A089',
+	strokeColor: '#5481A0',
 	fillColor: '#5F5E5D',
-	strokeWidth: 10
+	strokeWidth: 20
 });
 
 var count = 0;
 var position = view.center;
 var spiral = new Path({
-	fillColor: '#444'
+	fillColor: '#666'
 });
 
 while (position.y < (view.size.height)-25) {
@@ -109,23 +108,6 @@ while (position.y < (view.size.height)-25) {
 	position += vector;
 }
 
-function onKeyDown(event) {
-	if (event.key == 'z') {
-		// Scale the path by 110%:
-		spiral.scale(1.1);
-
-		// Prevent the key event from bubbling
-		return false;
-	}
-	if (event.key == 'x') {
-		spiral.scale(1.1);
-		return false;
-	}
-}
-
-function onFrame(event) {
-	// spiral.rotate(3);
-}
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Adapted from Flocking Processing example by Daniel Schiffman:
 // http://processing.org/learning/topics/flocking.html
@@ -180,14 +162,26 @@ var Boid = Base.extend({
 		}
 	},
 
+	removeBoid: function() {
+		console.log('here');
+		this.head.remove();
+		this.path.remove();
+		this.shortPath.remove();
+	},
+
 	createItems: function() {
-		this.head = (project.symbols[0]
-			? project.symbols[0]
-			: new Symbol(new Path.Ellipse({
-				from: [0, 0],
-				to: [13, 8],
-				fillColor: 'white'
-			}))).place();
+		this.head = new Path.Ellipse({
+			from: [0,0],
+			to: [13, 8],
+			fillColor: 'white'
+		});
+		// this.head = (project.symbols[0]
+		// 	? project.symbols[0]
+		// 	: new Symbol(new Path.Ellipse({
+		// 		from: [0, 0],
+		// 		to: [13, 8],
+		// 		fillColor: 'white'
+		// 	}))).place();
 		this.path = new Path({
 			strokeColor: 'white',
 			strokeWidth: 2,
@@ -208,16 +202,15 @@ var Boid = Base.extend({
 		var angle = this.vector.angle;
 		this.head.rotate(angle - this.lastAngle);
 		this.lastAngle = angle;
-        
 	},
 
 	// We accumulate a new acceleration each time based on three rules
 	flock: function(boids) {
 		this.calculateDistances(boids);
-		// var separation = this.separate(boids) * 3;
-		var alignment = this.align(boids);
+		var separation = this.separate(boids) * 2;
+		var alignment = this.align(boids);	
 		var cohesion = this.cohesion(boids);
-		this.acceleration += cohesion; //+ alignment + separation
+		this.acceleration += cohesion + separation + alignment; //+ alignment + separation
 	},
 
 	calculateDistances: function(boids) {
@@ -235,7 +228,23 @@ var Boid = Base.extend({
 		this.position += this.vector;
 		// Reset acceleration to 0 each cycle
 		this.acceleration = new Point();
-		
+		var diff = this.position.getDistance(view.center);
+		// console.error(view.center.x);
+		// console.error(this.position.x);
+
+		// if (diff < 30 && diff < 30) {
+		// 	boids[12].head.fillColor = 'red';
+		// 	boids[12].path.strokeColor = 'red';
+		// 	boids[12].shortPath.strokeColor = 'red';
+
+			// var i = boids.indexOf(this);
+			// var tmp = boids[i];
+			// this.head.remove();
+			// this.path.remove();
+			// this.shortPath.remove();
+			// boids = boids.slice(i, i+1);
+			// console.log("new length: " + boids.length);
+		// }
 	},
 
 	seek: function(target) {
@@ -269,7 +278,7 @@ var Boid = Base.extend({
 	// Takes a second argument, if true, it slows down as it approaches
 	// the target
 	steer: function(target, slowdown) {
-		slowdown = true;
+		// slowdown = true;	
 		var steer,
 			desired = view.center - this.position;
 		var distance = desired.length;
@@ -277,7 +286,7 @@ var Boid = Base.extend({
 		// (1 -- based on distance, 2 -- maxSpeed)
 		if (slowdown && distance < 100) {
 			// This damping is somewhat arbitrary:
-			desired.length = this.maxSpeed * (distance * 0.001);
+			desired.length = this.maxSpeed * (distance * 0.01);
 		} else {
 			desired.length = this.maxSpeed;
 		}
@@ -361,6 +370,15 @@ var Boid = Base.extend({
 	}
 });
 
+var handle = Project.importJSON('["Path",{"pathData":"M154.281,557.935c-4.539,4.829-12.133,5.064-16.962,0.525l-52.501-49.348c-4.829-4.539-5.064-12.133-0.525-16.962l266.531-283.558c4.539-4.829,12.133-5.064,16.962-0.525l52.501,49.348c4.829,4.539,5.064,12.133,0.525,16.962L154.281,557.935z","fillColor":"#888"}]');
+
+handle.position += new Point(40,160);
+handle.rotate(25);
+handle.scale(0.75);
+var leg = Project.importJSON('["Path",{"pathData":"M154.281,557.935c-4.539,4.829-12.133,5.064-16.962,0.525l-52.501-49.348c-4.829-4.539-5.064-12.133-0.525-16.962l266.531-283.558c4.539-4.829,12.133-5.064,16.962-0.525l52.501,49.348c4.829,4.539,5.064,12.133,0.525,16.962L154.281,557.935z","fillColor":"#FECD64"}]');
+leg.position += new Point(-60,200);
+leg.rotate(25);
+
 var heartPath = Project.importJSON('["Path",{"pathData":"M514.69629,624.70313c-7.10205,-27.02441 -17.2373,-52.39453 -30.40576,-76.10059c-13.17383,-23.70703 -38.65137,-60.52246 -76.44434,-110.45801c-27.71631,-36.64355 -44.78174,-59.89355 -51.19189,-69.74414c-10.5376,-16.02979 -18.15527,-30.74951 -22.84717,-44.14893c-4.69727,-13.39893 -7.04297,-26.97021 -7.04297,-40.71289c0,-25.42432 8.47119,-46.72559 25.42383,-63.90381c16.94775,-17.17871 37.90527,-25.76758 62.87354,-25.76758c25.19287,0 47.06885,8.93262 65.62158,26.79834c13.96826,13.28662 25.30615,33.10059 34.01318,59.4375c7.55859,-25.88037 18.20898,-45.57666 31.95215,-59.09424c19.00879,-18.32178 40.99707,-27.48535 65.96484,-27.48535c24.7373,0 45.69531,8.53564 62.87305,25.5957c17.17871,17.06592 25.76855,37.39551 25.76855,60.98389c0,20.61377 -5.04102,42.08691 -15.11719,64.41895c-10.08203,22.33203 -29.54687,51.59521 -58.40723,87.78271c-37.56738,47.41211 -64.93457,86.35352 -82.11328,116.8125c-13.51758,24.0498 -23.82422,49.24902 -30.9209,75.58594z","strokeWidth":2,"strokeCap":"round"}]');
 var pathLength = heartPath.length;
 
@@ -368,7 +386,8 @@ var boids = [];
 var groupTogether = false;
 
 // Add the boids:
-for (var i = 0; i < 30; i++) {
+function addBoids (int) {
+	for (var i = 0; i < int; i++) {
     var rad = panRad; //Set to radius of pan
     var angle = Math.random() * 2 * Math.PI;
     var x = Math.cos(angle) * rad;
@@ -381,11 +400,17 @@ for (var i = 0; i < 30; i++) {
     // console.log("center = " + view.center.toString());
     // console.log("position = " + position.toString());
     boids.push(new Boid(position, 10, 0.05));
+	}
 }
 
-
+addBoids(30);
+var doanim = 0;
+var moveback = false;
 function onFrame(event) {
-    for (var i = 0, l = boids.length; i < l; i++) {
+	// if ((Math.floor(event.count) % 300 === 100) && boids.length<20) {
+	// 	addBoids(10);
+	// }
+	for (var i = 0, l = boids.length; i < l; i++) {
 		if (groupTogether) {
 			var length = ((i + event.count / 30) % l) / l * pathLength;
 			var point = heartPath.getPointAt(length);
@@ -394,6 +419,7 @@ function onFrame(event) {
 		}
 		boids[i].run(boids);
 	}
+
 }
 
 // Reposition the heart path whenever the window is resized:
@@ -407,19 +433,6 @@ function onMouseDown(event) {
     
     var position = event.point;
 	boids.push(new Boid(position, 10, 0.05));
-    for (var i = 0, l = boids.length; i < l; i++) {
-        position = boids[i].position;
-        console.log("position = " + position);
-        var diff = position - view.center;
-		var outsideOfPan = Math.pow((position.x - view.center), 2) + Math.pow((position.y - view.center), 2) > Math.pow(panRad, 2) 
-        console.log("diff = " + diff);
-        console.log("outside = " + outsideOfPan);
-        if ((Math.abs(diff.x) < 1) && (Math.abs(diff.y) < 1) && (!outsideOfPan)) {
-			//var i = boids.indexOf(this);
-			// console.error(i);
-			boids.splice(i,1);
-		}
-    }
 }
 
 
@@ -430,11 +443,18 @@ function onKeyDown(event) {
 		return false;
 	}
 	if (event.key == 'a') {
-		var position = new Point(200,300);
-		boids.push(new Boid(position, 10, 0.05));
-
-		var pos = new Point(1100,600);
-		boids.push(new Boid(pos, 10,0.05));
+		console.error(boids.length);
+	}
+	if (event.key == 'b') {
+		console.error('whoo');
+		var tmp = boids.pop();
+		tmp.head.remove();
+		tmp.path.remove();
+		tmp.shortPath.remove();
+		console.error('huh');
+		console.error(boids.length)
+	}
+	if (event.key == 'z') {
+		groupTogether = true;
 	}
 }
-        
