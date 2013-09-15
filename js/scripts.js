@@ -338,6 +338,15 @@ function onFrame(event) {
 	}
 
 }
+//////////////////////////////////////////////////////////////////////////////////////////////
+var pepper = new Raster("images/pepper.png")
+pepper.scale(0.2);
+pepper.position = new Point(0.9 * view.size.width, view.size.height/2);
+console.log("x: " + pepper.position.x);
+console.log("y: " + pepper.position.y);
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 
 // Reposition the heart path whenever the window is resized:
 function onResize(event) {
@@ -526,3 +535,4 @@ console.log(view.size.width);
 // function onResize(event) {
 // 	initializePath();
 // }
+
