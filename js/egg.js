@@ -196,14 +196,14 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         }
     };
 
-    EGG.init();
+    // EGG.init();
 
-    function onFrame(event) {
-        EGG.update();
-    }
+    // function onFrame(event) {
+    //     EGG.update();
+    // }
 
-    function onMouseDown(event) {
-        EGG.pushYolk(event.point);
-    }
+    // function onMouseDown(event) {
+    //     EGG.pushYolk(event.point);
+    // }
 
 // })(jQuery, window, document);

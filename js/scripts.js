@@ -1,4 +1,5 @@
 var unveiled = false;
+var startEggAnimation = false;
 
 var panRad = (view.size.height /2) -10;
 // The pan is a circle
@@ -320,10 +321,12 @@ function addBoids (int) {
 	}
 }
 
-var tadpolesAppear = $.Deferred();
+var lastChunkCracked = $.Deferred();
 
-tadpolesAppear.done(function() {
+lastChunkCracked.done(function() {
 	console.log('drawing tadpoles');
+	//IMPREGG.EGG.init();
+	//startEggAnimation = true;
 
 	var timeToWaitBeforeTadpolesPopup = 5000;
 	
@@ -358,21 +361,21 @@ tadpolesAppear.done(function() {
 //addBoids(30);
 var doanim = 0;
 var moveback = false;
-function onFrame(event) {
-	// if ((Math.floor(event.count) % 300 === 100) && boids.length<20) {
-	// 	addBoids(10);
-	// }
-	for (var i = 0, l = boids.length; i < l; i++) {
-		if (groupTogether) {
-			var length = ((i + event.count / 30) % l) / l * pathLength;
-			var point = heartPath.getPointAt(length);
-			if (point)
-				boids[i].arrive(point);
-		}
-		boids[i].run(boids);
-	}
+// function onFrame(event) {
+// 	// if ((Math.floor(event.count) % 300 === 100) && boids.length<20) {
+// 	// 	addBoids(10);
+// 	// }
+// 	for (var i = 0, l = boids.length; i < l; i++) {
+// 		if (groupTogether) {
+// 			var length = ((i + event.count / 30) % l) / l * pathLength;
+// 			var point = heartPath.getPointAt(length);
+// 			if (point)
+// 				boids[i].arrive(point);
+// 		}
+// 		boids[i].run(boids);
+// 	}
 
-}
+// }
 
 // Reposition the heart path whenever the window is resized:
 function onResize(event) {
@@ -383,8 +386,9 @@ function onResize(event) {
 
 function onMouseDown(event) {
 	if (unveiled) {
-	    var position = event.point;
-		boids.push(new Boid(position, 10, 0.05));
+	 //    var position = event.point;
+		// boids.push(new Boid(position, 10, 0.05));
+		IMPREGG.EGG.pushYolk(event.point);
 	} 
 }
 
@@ -555,15 +559,21 @@ var unveilPan = function() {
 	// 	cracks[i].remove();
 	// }
 	//shell.remove();
+
 	
 	for (var i = 0; i < shell.length; i++) (function(n) {
 
-		var randomNum = (i === 0) ? 0 : randomInt(100, 2000);
+		var randomNum = (i === 0) ? 0 : randomInt(100, 1000);
+
+		if (i === 0) {
+			IMPREGG.EGG.init();
+			startEggAnimation = true;
+		}
 
 		setTimeout(function() {
 			shell[n].remove();
 			if (n === shell.length - 1) {
-				tadpolesAppear.resolve();
+				lastChunkCracked.resolve();
 			}
 
 			for (var i = 0; i < cracks.length; i++) {
@@ -609,6 +619,8 @@ console.log(view.size.width);
 // 	path.strokeWidth = 2;
 // }
 
+
+
 function onFrame(event) {
 	// pathHeight += (center.y - mousePos.y - pathHeight) / 10;
 	// for (var i = 1; i < points; i++) {
@@ -632,7 +644,15 @@ function onFrame(event) {
 		}
 		boids[i].run(boids);
 	}
+
+	if (startEggAnimation) {
+		IMPREGG.EGG.update();
+	}
 }
+
+// function onMouseDown(event) {
+//     IMPREGG.EGG.pushYolk(event.point);
+// }
 
 // function onMouseMove(event) {
 // 	mousePos = event.point;
