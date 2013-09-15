@@ -9,10 +9,10 @@ var panRad = (view.size.height /2) -10;
 // The pan is a circle
 var pan = new Path.Circle({
 	center: view.center,
-	radius: (view.size.height /2)-10,
+	radius: panRad,
 	strokeColor: '#5481A0',
 	fillColor: '#5F5E5D',
-	strokeWidth: 20
+	strokeWidth: panRad/12
 });
 
 console.log("pan: " + pan.length);
@@ -32,7 +32,7 @@ normal.length = panRad * 2;
 
 var rectangle = new Rectangle( {
 	point: norm_point,
-	size: new Size(panRad * 2, 80)
+	size: new Size(panRad * 2, panRad / 4)
 });
 var cornerSize = new Size(10,10);
 var handle1 = new Path.Rectangle(rectangle, cornerSize);
