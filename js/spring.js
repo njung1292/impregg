@@ -2,25 +2,29 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 
 // (function($, window, document, undefined) {
   
-    var Spring = IMPREGG.Spring = function(a, b, restLength, strength) {
-        this.init(a, b, restLength, strength);
+    var Spring = IMPREGG.Spring = function(aID, bID, restLength, strength) {
+        this.init(aID, bID, restLength, strength);
     }
 
     Spring.prototype = {
-        init: function(a, b, restLength, strength){
-            this.a = a;
-            this.b = b;
+        init: function(aID, bID, restLength, strength){
+            this.aID = aID;
+            this.bID = bID;
             this.restLength = restLength;
             this.strength = strength;
         },
 
-        update: function(){
+        update: function(egg){
+            var a = egg.getPoint(this.aID);
+            var b = egg.getPoint(this.bID);
             var delta = this.b - this.a;
             var deltaLength = delta.length;
             var difference = (deltaLength - this.restLength)/deltaLength;
             var adjustment = delta * difference * this.strength / 2;
-            this.a += adjustment;
-            this.b -= adjustment;
+            a += adjustment;
+            b -= adjustment;
+            egg.setPoint(this.aID, a);
+            egg.setPoint(this.bID, b);
             return this;
         }
     }

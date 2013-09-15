@@ -2,24 +2,29 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 
 // (function($, window, document, undefined) {
   
-    var Mass = IMPREGG.Mass = function(p, friction) {
-        this.init(p, friction);
+    var Mass = IMPREGG.Mass = function(p, pID) {
+        this.init(p, pID);
     }
 
     Mass.prototype = {
-        init: function(p, friction){
-            this.pos = p;
+        init: function(p, pID){
+            this.pID = pID;
             this.oldPos = new Point(p);
-            this.friction = friction;
         },
 
-        update: function(){
-            var tempPos = this.pos;
-            var velocity = this.pos - this.oldPos;
-            var frictionForce = this.friction * velocity/velocity.length;
-            velocity = Math.max(velocity - frictionForce, 0);
-            this.pos += velocity;
-            this.oldPos = tempPos;
+        setVelocity: function(velocity) {
+            this.oldPos -= velocity;
+        }
+
+        update: function(egg){
+            var curPos = egg.getPoint(this.pID);
+            var velocity = curPos - this.oldPos;
+            if (velocity.length > egg.FRICTION) {
+                var frictionForce = velocity.normalize(egg.FRICTION);
+                velocity -= frictionForce;
+                egg.setPoint(this.pID, curPos + velocity);
+            this.oldPos = curPos;
+            return point;
         }
     }
 // })(jQuery, window, document);

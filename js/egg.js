@@ -51,69 +51,67 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
             return circle;
         },
 
-        createSprings: function() {
-            springs = [];
-            var segments = this.path.segments;
-            for (var i = 0; i < segments.length; i++) {
-                var segment = segments[i];
-                var a = segment.point;
-                var b = segment.next.point;
-                springs.push(this.createSpring(a,b));
-                var b = segment.next.next.point;
-                springs.push(this.createSpring(a,b));
-                var b = this.yolk.position;
-                springs.push(this.createSpring(a,b));
-            }
-            this.springs = springs;
-        },
-
-        createSpring: function(a, b) {
-            return new IMPREGG.Spring(a, b, (a - b).length, this.STIFFNESS);
-        },
-
         createMasses: function() {
             this.masses = [];
             var segments = this.path.segments;
             for (var i = 0; i < segments.length; i++) {
-                var p = new Point(segments[i].point);
-                p.oldPos = new Point(p) + new Point(Math.random(),Math.random())*3;
+                var mass = new Mass(segments[i].point, i);
+                mass.setVelocity(new Point(Math.random(),Math.random())*3);
                 this.masses.push(p);
             }
-            p = this.yolk.position;
-            p.oldPos = new Point(p) + new Point(Math.random(),Math.random())*3;
+            mass = this.yolk.position;
+            mass.setVelocity(new Point(Math.random(),Math.random())*3);
             this.masses.push(p);
         },
 
-        update: function() {
-            this.masses[this.NUM_POINTS] = this.updatePoint(this.masses[this.NUM_POINTS]);
-            this.yolk.position = this.masses[this.NUM_POINTS];
-            for (var i = 1; i < this.NUM_POINTS; i++) {
-                this.masses[i] = this.updatePoint(this.masses[i]);
-                this.path.segments[i-1].point = this.masses[i];
+        createSprings: function() {
+            var springs = [];
+            var nPnts = this.NUM_POINTS;
+            for (var i = 0; i < nPnts; i++) {
+                springs.push(this.createSpring(i, (i+1) % nPnts));
+                springs.push(this.createSpring(i, (i+2) % nPnts));
+                springs.push(this.createSpring(i, nPnts));
             }
-
-            for (var i = 0; i < this.springs.length; i++) {
-                this.springs[i] = this.springs[i].update();
-                // this.spring[i].update;
-
-            }
-
-            this.path.smooth();
+            this.springs = springs;
         },
 
-        updatePoint: function(point){
-            var tempPos = point;
-            var velocity = point - point.oldPos;
-            if (velocity.length > this.FRICTION) {
-                var frictionForce = new Point(1, 0);
-                frictionForce.angle = velocity.angle;
-                frictionForce *= this.FRICTION;
-                velocity -= frictionForce;
-                point += velocity;
+        createSpring: function(aID, bID) {
+            var length = (this.getPoint(aID) - this.getPoint(bID)).length;
+            return new IMPREGG.Spring(aID, bID, length, this.STIFFNESS);
+        },
+
+        getPoint: function(ID) {
+            var point;
+            if (ID < NUM_POINTS) {
+                point = this.path.segments[i].point;
             }
-            point.oldPos = tempPos;
+            else {
+                point = this.yolk.position;
+            }
             return point;
         }
+
+        setPoint: function(ID, point) {
+            if (ID < NUM_POINTS) {
+                this.path.segments[i].point = point;
+            }
+            else {
+                this.yolk.position = point;
+            }
+        }
+
+        update: function() {
+            var nPnts = this.NUM_POINTS
+            for (var i = 1; i < nPnts; i++) {
+                this.masses[i].update(this);
+            }
+            for (var iter = 0; iter < MAX_ITERS; iter++) {
+                for (var i = 0; i < this.springs.length; i++) {
+                    this.springs[i].update(this);
+                }
+            }
+            this.path.smooth();
+        },
     };
 
     //uncomment this to test;
