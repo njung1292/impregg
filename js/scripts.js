@@ -131,6 +131,7 @@ var Boid = Base.extend({
 		var angle = this.vector.angle;
 		this.head.rotate(angle - this.lastAngle);
 		this.lastAngle = angle;
+        
 	},
 
 	// We accumulate a new acceleration each time based on three rules
@@ -157,12 +158,7 @@ var Boid = Base.extend({
 		this.position += this.vector;
 		// Reset acceleration to 0 each cycle
 		this.acceleration = new Point();
-		var diff = this.position - view.center;
-		if ((Math.abs(diff.x) < 1) && Math.abs(diff.y) < 1) {
-			var i = boids.indexOf(this);
-			// console.error(i);
-			// boids.splice(i,1);
-		}
+		
 	},
 
 	seek: function(target) {
@@ -312,7 +308,7 @@ for (var i = 0; i < 30; i++) {
 
 
 function onFrame(event) {
-	for (var i = 0, l = boids.length; i < l; i++) {
+    for (var i = 0, l = boids.length; i < l; i++) {
 		if (groupTogether) {
 			var length = ((i + event.count / 30) % l) / l * pathLength;
 			var point = heartPath.getPointAt(length);
@@ -352,8 +348,6 @@ function onKeyDown(event) {
 		boids.push(new Boid(pos, 10,0.05));
 	}
 }
-
-
 
 
 /////////////// MESSY CODE I KNOW. these be the cracks ////////////
@@ -619,3 +613,14 @@ function onResize(event) {
 // }
 
 // IMPREGG.SPLASH.init();
+
+var diff = this.position - view.center;
+		var outsideOfPan = Math.pow((this.position.x - view.center), 2) + Math.pow((this.position.y - view.center), 2) > Math.pow(panRad, 2) 
+        console.log("diff = " + diff);
+        console.log("outside = " + outsideOfPan);
+        if ((Math.abs(diff.x) < 1) && (Math.abs(diff.y) < 1) && (!outsideOfPan)) {
+			var i = boids.indexOf(this);
+			// console.error(i);
+			boids.splice(i,1);
+		}
+        
