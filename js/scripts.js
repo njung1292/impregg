@@ -1,8 +1,6 @@
 var unveiled = false;
 var startEggAnimation = false;
 var startEggMouseDown = false;
-var saltSelected = false;
-var pepperSelected = false;
 
 
 var panRad = (view.size.height /2) -10;
@@ -234,7 +232,7 @@ var Boid = Base.extend({
 	// the target
 	steer: function(target, slowdown) {
 		slowdown = true;
-		var steer, desired = IMPREGG.EGG.yolk.position;
+		var steer, desired = view.center - IMPREGG.EGG.yolk.position;
 			// desired = view.center - this.position;
 		var distance = desired.length;
 		// Two options for desired vector magnitude
@@ -391,30 +389,7 @@ lastChunkCracked.done(function() {
 	//IMPREGG.EGG.init();
 	//startEggAnimation = true;
 
-	$('#pepper').addClass('shown');
-
-	$('#salt').addClass('shown');
-
-
-	$('#salt').on('click', function() {
-		if (saltSelected) {
-			saltSelected = false;
-		} else {
-			saltSelected = true;
-			pepperSelected = false;
-		}
-	});
-
-	$('#pepper').on('click', function() {
-		if (pepperSelected) {
-			pepperSelected = false;
-		} else {
-			pepperSelected = true;
-			saltSelected = false;
-		}
-	});
-
-	var timeToWaitBeforeTadpolesPopup = 7000;
+	var timeToWaitBeforeTadpolesPopup = 5000;
 	
 	setTimeout(function() {
 		// for (var i = 0; i < 30; i++) {
@@ -463,11 +438,11 @@ var moveback = false;
 
 // }
 //////////////////////////////////////////////////////////////////////////////////////////////
-// var pepper = new Raster("images/pepper-small.png")
-// pepper.scale(0.2);
-// pepper.position = new Point(0.9 * view.size.width, view.size.height/2);
-// console.log("x: " + pepper.position.x);
-// console.log("y: " + pepper.position.y);
+var pepper = new Raster("images/pepper.png")
+pepper.scale(0.2);
+pepper.position = new Point(0.9 * view.size.width, view.size.height/2);
+console.log("x: " + pepper.position.x);
+console.log("y: " + pepper.position.y);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -486,7 +461,7 @@ function displaySalt(event) {
         var point = new Point(position.x + randomInt(-11, 11), position.y + randomInt(-11, 11));
         var size = new Size(3, 3);
         var square = new Shape.Rectangle(point, size);
-        square.fillColor = '#fff';
+        square.fillColor = 'white';
         setTimeout(function() {
             square.remove();
         }, randomInt(1000, 2000));
@@ -499,7 +474,7 @@ function displayPepper(event) {
         var point = new Point(position.x + randomInt(-11, 11), position.y + randomInt(-11, 11));
         var size = new Size(3, 3);
         var square = new Shape.Rectangle(point, size);
-        square.fillColor = "#55443D";
+        square.fillColor = "#6C5319";
         setTimeout(function() {
             square.remove();
         }, randomInt(1000, 2000));
@@ -513,9 +488,6 @@ function onMouseDown(event) {
 	// boids.push(new Boid(position, 10, 0.05));
     // displaySalt(event);
     // displayPepper(event);
- //    var position = event.point;
-	// boids.push(new Boid(position, 10, 0.05));
-    
 
 	if (unveiled && startEggMouseDown) {
 	 //    var position = event.point;
@@ -523,16 +495,6 @@ function onMouseDown(event) {
 		var touchedYolk = IMPREGG.EGG.pushYolk(event.point);
 		if (touchedYolk) {
 			$('.dying2-sound')[0].play();
-		}
-
-		if (saltSelected) {
-			displaySalt(event);
-			console.log('displaying salt');
-		}
-
-		if (pepperSelected) {
-			displayPepper(event);
-			console.log('displaying pepper');
 		}
 	} 
 
@@ -730,9 +692,6 @@ var unveilPan = function() {
 	// 	cracks[i].remove();
 	// }
 	//shell.remove();
-
-	// $('<div id="#pepper"></div>').insertAfter('#myCanvas');
-
 
 
 	var hasBeenSeen = false;
