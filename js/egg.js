@@ -1,6 +1,36 @@
 window.IMPREGG || (IMPREGG = {}); //define a namespace
 
 // (function($, window, document, undefined) {
+
+    // var Mass = function(p, pID) {
+
+    //     console.log("p: ", p);
+    //     this.init(p, pID);
+    // };
+
+    // Mass.prototype = {
+    //     init: function(p, pID){
+    //         this.pID = pID;
+    //         this.oldPos = new Point(p);
+    //     },
+
+    //     setVelocity: function(velocity) {
+    //         this.oldPos -= velocity;
+    //     },
+
+    //     update: function(egg){
+    //         var curPos = egg.getPoint(this.pID);
+    //         var velocity = curPos - this.oldPos;
+    //         if (velocity.length > egg.FRICTION) {
+    //             var frictionForce = velocity.normalize(egg.FRICTION);
+    //             velocity -= frictionForce;
+    //             egg.setPoint(this.pID, curPos + velocity);
+    //         }
+    //         this.oldPos = curPos;
+    //         return this;
+    //         //return point;
+    //     }
+    // }
   
     var EGG = IMPREGG.EGG = { //this is your js object
         init: function() {
@@ -11,9 +41,9 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         },
 
         NUM_POINTS: 10,
-        MAX_ITERS: 3,
-        STIFFNESS: 0.5,
-        FRICTION: 0.15,
+        MAX_ITERS: 2,
+        STIFFNESS: 0.05,
+        FRICTION: 0.05,
         WHITES_RADIUS: 100,
         YOLK_RADIUS: 30,
 
@@ -55,13 +85,13 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
             this.masses = [];
             var segments = this.path.segments;
             for (var i = 0; i < segments.length; i++) {
-                var mass = new Mass(segments[i].point, i);
+                var mass = new IMPREGG.Mass(segments[i].point, i);
                 mass.setVelocity(new Point(Math.random(),Math.random())*3);
-                this.masses.push(p);
+                this.masses.push(mass);
             }
-            mass = this.yolk.position;
+            mass = new IMPREGG.Mass(this.yolk.position, this.NUM_POINTS);
             mass.setVelocity(new Point(Math.random(),Math.random())*3);
-            this.masses.push(p);
+            this.masses.push(mass);
         },
 
         createSprings: function() {
@@ -82,31 +112,33 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 
         getPoint: function(ID) {
             var point;
-            if (ID < NUM_POINTS) {
-                point = this.path.segments[i].point;
+            if (ID < this.NUM_POINTS) {
+                point = this.path.segments[ID].point;
             }
             else {
                 point = this.yolk.position;
             }
-            return point;
-        }
+            return new Point(point);
+        },
 
         setPoint: function(ID, point) {
-            if (ID < NUM_POINTS) {
-                this.path.segments[i].point = point;
+            if (ID < this.NUM_POINTS) {
+                this.path.segments[ID].point = new Point(point);
             }
             else {
-                this.yolk.position = point;
+                this.yolk.position = new Point(point);
             }
-        }
+        },
 
         update: function() {
             var nPnts = this.NUM_POINTS
-            for (var i = 1; i < nPnts; i++) {
+            for (var i = 0; i <= nPnts; i++) {
                 this.masses[i].update(this);
             }
-            for (var iter = 0; iter < MAX_ITERS; iter++) {
+            for (var iter = 0; iter < this.MAX_ITERS; iter++) {
                 for (var i = 0; i < this.springs.length; i++) {
+
+            // console.log("spring " + i +" "+ this.springs[i]);
                     this.springs[i].update(this);
                 }
             }
@@ -116,6 +148,8 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 
     //uncomment this to test;
     EGG.init();
+    // offFrame();
+    // console.log(EGG.springs);
 
     function onFrame(event) {
         EGG.update();

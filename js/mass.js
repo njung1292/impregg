@@ -3,6 +3,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 // (function($, window, document, undefined) {
   
     var Mass = IMPREGG.Mass = function(p, pID) {
+
         this.init(p, pID);
     }
 
@@ -14,7 +15,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 
         setVelocity: function(velocity) {
             this.oldPos -= velocity;
-        }
+        },
 
         update: function(egg){
             var curPos = egg.getPoint(this.pID);
@@ -23,8 +24,9 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
                 var frictionForce = velocity.normalize(egg.FRICTION);
                 velocity -= frictionForce;
                 egg.setPoint(this.pID, curPos + velocity);
+            }
             this.oldPos = curPos;
-            return point;
+            return this;
         }
     }
 // })(jQuery, window, document);

@@ -17,7 +17,10 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         update: function(egg){
             var a = egg.getPoint(this.aID);
             var b = egg.getPoint(this.bID);
-            var delta = this.b - this.a;
+            // console.log("a: ", a);
+            // console.log("b: ", b);
+            var delta = b - a;
+                // console.log("delta: ", delta);
             var deltaLength = delta.length;
             var difference = (deltaLength - this.restLength)/deltaLength;
             var adjustment = delta * difference * this.strength / 2;
