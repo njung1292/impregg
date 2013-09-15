@@ -62,7 +62,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 
         createWhites: function() {
             var path = new Path( {
-                fillColor: 'white',
+                fillColor: new Color(255,255,255,0.98),
                 closed: true
             });
             var center = view.center;
@@ -78,7 +78,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 
         createYolk: function() {
             var circle = new Path.Circle(view.center, this.YOLK_RADIUS);
-            circle.fillColor = 'yellow';
+            circle.fillColor = new Color(255,255,0,0.92);
             return circle;
         },
 
@@ -192,6 +192,10 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
                     this.masses[i].setVelocity(force);
                 }
                 this.masses[this.NUM_POINTS].setVelocity(force);
+                return true;
+            }
+            else {
+                return false;
             }
         }
     };

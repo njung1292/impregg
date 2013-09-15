@@ -2,8 +2,7 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var app = express();
-var server = http.createServer(app);
-app.set('port', process.env.PORT || 9292);
+
 
 // CORS Middleware that sends HTTP headers with every request
 // Allows connections from http://localhost:9292
@@ -18,15 +17,18 @@ var allowCrossDomain = function(req, res, next) {
 app.configure(function(){
   app.set('port', process.env.PORT || 9292);
   app.set('/', __dirname);
-  app.use(express.favicon());
-  app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(allowCrossDomain);
   app.use(app.router);
-  app.use(express.static(path.join(__dirname)));
+  app.use("/", express.static(__dirname));
   app.use(express.errorHandler());
 });
+
+var server = http.createServer(app);
+
+// app.use(express.static(path.join(__dirname)));
+// app.get("/", function(req, res) { res.redirect("/index.html");});
 
 
 //boot

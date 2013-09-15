@@ -2,6 +2,7 @@ var unveiled = false;
 var startEggAnimation = false;
 var startEggMouseDown = false;
 
+
 var panRad = (view.size.height /2) -10;
 // The pan is a circle
 var pan = new Path.Circle({
@@ -340,7 +341,19 @@ var Boid = Base.extend({
 // var handle = new Raster("images/handle1.png");
 // handle.position = new Point(view.size.width/2, view.size.height/3);
 
-// console.log("position: " + handle.size);
+var rad = panRad; //Set to radius of pan
+var angle = 155 / 360 * 2 * Math.PI;
+var x = Math.cos(angle) * rad;
+var y = Math.sin(angle) * rad;
+// console.log("radius: " + pan.radius);
+// console.log(x);
+// console.log(y);
+var point = new Point(x - rad / 2, y);
+var position1 = view.center + point;
+    
+// handle.position = position1;
+// handle.rotate(25);
+// handle.scale(0.75);
 // var leg = Project.importJSON('["Path",{"pathData":"M154.281,557.935c-4.539,4.829-12.133,5.064-16.962,0.525l-52.501-49.348c-4.829-4.539-5.064-12.133-0.525-16.962l266.531-283.558c4.539-4.829,12.133-5.064,16.962-0.525l52.501,49.348c4.829,4.539,5.064,12.133,0.525,16.962L154.281,557.935z","fillColor":"#FECD64"}]');
 // leg.position += new Point(-60,200);
 // leg.rotate(25);
@@ -442,12 +455,49 @@ function onResize(event) {
 	pathLength = heartPath.length;
 }
 
+function displaySalt(event) {
+    for (var i = 0; i < 4; i++) (function(n) {
+        var position = event.point;
+        var point = new Point(position.x + randomInt(-11, 11), position.y + randomInt(-11, 11));
+        var size = new Size(3, 3);
+        var square = new Shape.Rectangle(point, size);
+        square.fillColor = 'white';
+        setTimeout(function() {
+            square.remove();
+        }, randomInt(1000, 2000));
+    })(i);
+}
+
+function displayPepper(event) {
+    for (var i = 0; i < 4; i++) (function(n) {
+        var position = event.point;
+        var point = new Point(position.x + randomInt(-11, 11), position.y + randomInt(-11, 11));
+        var size = new Size(3, 3);
+        var square = new Shape.Rectangle(point, size);
+        square.fillColor = "#6C5319";
+        setTimeout(function() {
+            square.remove();
+        }, randomInt(1000, 2000));
+    })(i);
+}
+
 function onMouseDown(event) {
+
+    
+    var position = event.point;
+	boids.push(new Boid(position, 10, 0.05));
+    displaySalt(event);
+    displayPepper(event);
+
 	if (unveiled && startEggMouseDown) {
 	 //    var position = event.point;
 		// boids.push(new Boid(position, 10, 0.05));
-		IMPREGG.EGG.pushYolk(event.point);
+		var touchedYolk = IMPREGG.EGG.pushYolk(event.point);
+		if (touchedYolk) {
+			$('.dying2-sound')[0].play();
+		}
 	} 
+
 }
 
 function onKeyDown(event) {
@@ -601,7 +651,32 @@ var drawCracks = function() {
 }
 
 
+var startNoelleSizzle = function() {
+	// (function(randomNumber) {
+	setTimeout(function() {
+		$('.noelle-sizzle-sound')[0].play();
+		console.log('noelle sizzled');
+		startDavidSizzle();
+	}, randomInt(5000, 12000));	
+	// })(noelleRandom);
+	// noelleRandom = randomInt(6000, 14000);
+}
+
+var startDavidSizzle = function() {
+	// (function(randomNumber) {
+	setTimeout(function() {
+		$('.david-sizzle-sound')[0].play();
+		console.log('david sizzled');
+		startNoelleSizzle();
+	}, randomInt(5000, 12000));	
+	// })(davidRandom);
+	// davidRandom = randomInt(6000, 14000);
+}
+
+
 var unveilPan = function() {
+
+	console.log('unveiling pan');
 
 	for (var i = 0; i < cracks.length; i++) {
 		cracks[i].remove();
@@ -618,16 +693,23 @@ var unveilPan = function() {
 	// }
 	//shell.remove();
 
-	
+
+	var hasBeenSeen = false;
 	for (var i = 0; i < shell.length; i++) (function(n) {
 
 		var randomNum = (i === 0) ? 0 : randomInt(100, 1000);
 
-		if (i === 0) {
+		if (i === 0 || !hasBeenSeen) {
+			hasBeenSeen = true;
 			IMPREGG.EGG.init();
 			startEggAnimation = true;
-			this.setTimeout(function() {
+			$('.slosh-sound')[0].play();
+			setTimeout(function() {
+				console.log('playing sounds');
 				startEggMouseDown = true;
+				$('.sizzle1-sound')[0].play();
+				startDavidSizzle();
+				startNoelleSizzle();
 			}, 1000);
 		}
 
