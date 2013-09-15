@@ -30,8 +30,8 @@ canvas {
 	width: 100px;
 	height: 180px;
 	position: absolute;
-	right: 50px;
-	top: 100px;
+	right: 55px;
+	top: 140px;
 
 	&.shown {
 		background-image: image-url('pepper-small.png');
@@ -43,7 +43,7 @@ canvas {
 	width: 100px;
 	height: 177px;
 	position: absolute;
-	right: 50px;
+	right: 35px;
 	bottom: 100px;
 
 	&.shown {
