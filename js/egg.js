@@ -34,7 +34,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
   
     var EGG = IMPREGG.EGG = { //this is your js object
         init: function() {
-            this.PAN_RADIUS = 150;
+            this.PAN_RADIUS = (view.size.height /2) -10;
             this.createEgg();
             this.createMasses();
             this.createSprings();
@@ -45,15 +45,15 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         DROP_TIME: 60,
         NUM_POINTS: 10,
         MAX_ITERS: 3,
-        WHITE_STR: 0.01,
+        WHITE_STR: 0.006,
         YOLK_STR: 0.003,
-        WHITE_FRICT: 0.3,
+        WHITE_FRICT: 0.2,
         YOLK_FRICT: 0.2,
         WHITES_RADIUS: 100,
         YOLK_RADIUS: 40,
         INIT_SPEED: 10,
-        JIGGLE_AMOUNT: 3,
-        CLICK_FORCE: 0.7,
+        JIGGLE_AMOUNT: 2.5,
+        CLICK_FORCE: 0.9,
 
         createEgg: function() {
             this.path = this.createWhites();
@@ -154,7 +154,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         },
 
         updateDrop: function() {
-            this.path.scale(0.954);
+            this.path.scale(0.953);
             this.yolk.scale(0.962);
         },
 

@@ -21,7 +21,10 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         update: function(egg){
             var curPos = egg.getPoint(this.pID);
             var velocity = curPos - this.oldPos;
-            if (velocity.length > this.friction) {
+            if (velocity.length > 32 * this.friction) {
+                egg.setPoint(this.pID, curPos + velocity*0.8);
+            }
+            else if (velocity.length > this.friction) {
                 var frictionForce = velocity.normalize(this.friction);
                 velocity -= frictionForce;
                 egg.setPoint(this.pID, curPos + velocity);

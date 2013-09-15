@@ -1,5 +1,6 @@
 var unveiled = false;
 var startEggAnimation = false;
+var startEggMouseDown = false;
 
 var panRad = (view.size.height /2) -10;
 // The pan is a circle
@@ -385,7 +386,7 @@ function onResize(event) {
 }
 
 function onMouseDown(event) {
-	if (unveiled) {
+	if (unveiled && startEggMouseDown) {
 	 //    var position = event.point;
 		// boids.push(new Boid(position, 10, 0.05));
 		IMPREGG.EGG.pushYolk(event.point);
@@ -568,6 +569,9 @@ var unveilPan = function() {
 		if (i === 0) {
 			IMPREGG.EGG.init();
 			startEggAnimation = true;
+			this.setTimeout(function() {
+				startEggMouseDown = true;
+			}, 1000);
 		}
 
 		setTimeout(function() {
