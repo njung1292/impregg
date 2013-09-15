@@ -73,7 +73,7 @@ while (position.y < (view.size.height)-25) {
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Adapted from Flocking Processing example by Daniel Schiffman:
 // http://processing.org/learning/topics/flocking.html
-
+var separationCoeff = 3;
 var Boid = Base.extend({
 	initialize: function(position, maxSpeed, maxForce) {
 		var strength = Math.random() * 0.5;
@@ -162,7 +162,7 @@ var Boid = Base.extend({
 	// We accumulate a new acceleration each time based on three rules
 	flock: function(boids) {
 		this.calculateDistances(boids);
-		var separation = this.separate(boids)*2;
+		var separation = this.separate(boids)*separationCoeff;
 		// var alignment = this.align(boids);	
 		var cohesion = this.cohesion(boids);
 		this.acceleration += (cohesion) + separation; //+ alignment + separation
@@ -424,7 +424,7 @@ lastChunkCracked.done(function() {
 		}
 	});
 
-	var timeToWaitBeforeTadpolesPopup = 7000;
+	var timeToWaitBeforeTadpolesPopup = 10000;
 	
 	setTimeout(function() {
 		// for (var i = 0; i < 30; i++) {
@@ -847,14 +847,18 @@ function onFrame(event) {
 			if (vecToYolk.length < yolkRad) {
 				boids[i].setBoidPos(yolkPos - vecToYolk.normalize(yolkRad));
 			}
-			if (vecToPan.length > panRad) {
-				boids[i].setBoidPos(view.center - vecToPan.normalize(panRad));
+			if (vecToPan.length > 11*panRad/12) {
+				boids[i].setBoidPos(view.center - vecToPan.normalize(11*panRad/12));
 			}
 		}
 	}
 
 	if (startEggAnimation) {
 		IMPREGG.EGG.update();
+	}
+	if (boids.length > 0 && separationCoeff > 1){
+		separationCoeff -= 0.005;
+		console.log(separationCoeff);
 	}
 }
 
