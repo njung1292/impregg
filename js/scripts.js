@@ -1,8 +1,3 @@
-var randomInt = function(min, max) {
-	//inclusive, exclusive
-	return Math.floor(Math.random()*(max - min)+min);
-}
-
 var unveiled = false;
 var crackTaps = 0;
 var crackLimit = randomInt(7,14);
@@ -437,6 +432,10 @@ function onMouseDown(event) {
     var position = event.point;
 	boids.push(new Boid(position, 10, 0.05));
 	seek(event.point);
+	if (unveiled) {
+	    var position = event.point;
+		boids.push(new Boid(position, 10, 0.05));
+	} 
 }
 
 
@@ -449,16 +448,178 @@ function onKeyDown(event) {
 	if (event.key == 'a') {
 		console.error(boids.length);
 	}
-	if (event.key == 'b') {
-		console.error('whoo');
-		var tmp = boids.pop();
-		tmp.head.remove();
-		tmp.path.remove();
-		tmp.shortPath.remove();
-		console.error('huh');
-		console.error(boids.length)
-	}
+	// if (event.key == 'b') {
+	// 	console.error('whoo');
+	// 	var tmp = boids.pop();
+	// 	tmp.head.remove();
+	// 	tmp.path.remove();
+	// 	tmp.shortPath.remove();
+	// 	console.error('huh');
+	// 	console.error(boids.length)
+	// }
 	if (event.key == 'z') {
 		groupTogether = true;
 	}
 }
+
+/////////////// MESSY CODE I KNOW. these be the cracks ////////////
+
+
+
+
+
+var randomInt = function(min, max) {
+	//inclusive, exclusive
+	return Math.floor(Math.random()*(max - min)+min);
+}
+
+
+var crackTaps = 0;
+var crackLimit = randomInt(7,14);
+var cracks = [];
+var shell;
+
+$('#myCanvas').on('click', function(e) {
+    if (!unveiled) {
+    	drawCracks();
+    	crackTaps++;
+    	if (crackTaps >= crackLimit) {
+    		unveiled = true;
+    		unveilPan();
+    	}
+    }
+});
+
+var drawShell = function() {
+	var rect = new Rectangle(new Point(0,0), view.size);
+	shell = new Path.Rectangle(rect);
+	shell.fillColor = '#000';
+}
+
+
+var drawCracks = function() {
+	console.log(event.pageX, event.pageY);
+	var initialX = event.pageX;
+	var initialY = event.pageY;
+
+	var numPoints = randomInt(3,14);
+	console.log(numPoints);
+
+	var points = [];
+	var centerX = initialX;
+	var centerY = initialY;
+
+	for (var i = 0; i < numPoints; i++) {
+		var x = randomInt(-70, 70);
+		var y = randomInt(-70, 70);
+		centerX += x;
+		centerY += y;
+
+		points.push(new Point(centerX, centerY));
+	}
+
+
+	for (var i = 0; i < points.length - 1; i++) {
+		var path = new Path.Line(points[i], points[i+1]);
+		path.strokeColor = '#fff';
+		path.strokeWidth = 2;
+
+		cracks.push(path);
+	}
+
+
+	// var p1 = new Point(centerX - 30, centerY - 30);
+	// var p2 = new Point(centerX + 30, centerY + 30);
+	
+	// var path = new Path.Line(p1, p2);
+	// path.strokeColor = '#fff';
+}
+
+var unveilPan = function() {
+	for (var i = 0; i < cracks.length; i++) {
+		cracks[i].remove();
+	}
+	shell.remove();
+}
+
+
+drawShell();
+
+console.log(view.size.width);
+
+
+
+
+// ///////// DIS BE THE WAVES LALALAL /////
+
+// var width, height, center;
+// var points = 10;
+// var smooth = true;
+// var path = new Path();
+// var mousePos = view.center / 2;
+// var pathHeight = mousePos.y;
+// path.fillColor = 'black';
+// initializePath();
+
+// function initializePath() {
+// 	center = view.center;
+// 	width = view.size.width;
+// 	height = view.size.height / 2;
+// 	path.segments = [];
+// 	path.add(view.bounds.bottomLeft);
+// 	for (var i = 1; i < points; i++) {
+// 		var point = new Point(width / points * i, center.y);
+// 		path.add(point);
+// 	}
+// 	path.add(view.bounds.bottomRight);
+// 	path.fullySelected = false;
+// 	path.strokeColor = '#fff';
+// 	path.strokeWidth = 2;
+// }
+
+// function onFrame(event) {
+// 	pathHeight += (center.y - mousePos.y - pathHeight) / 10;
+// 	for (var i = 1; i < points; i++) {
+// 		var sinSeed = event.count + (i + i % 10) * 100;
+// 		var sinHeight = Math.sin(sinSeed / 200) * pathHeight;
+// 		var yPos = Math.sin(sinSeed / 100) * sinHeight + height;
+// 		path.segments[i].point.y = yPos;
+// 	}
+// 	if (smooth)
+// 		path.smooth();
+
+
+
+// 	//sperm
+// 	for (var i = 0, l = boids.length; i < l; i++) {
+// 		if (groupTogether) {
+// 			var length = ((i + event.count / 30) % l) / l * pathLength;
+// 			var point = heartPath.getPointAt(length);
+// 			if (point)
+// 				boids[i].arrive(point);
+// 		}
+// 		boids[i].run(boids);
+// 	}
+// }
+
+// function onMouseMove(event) {
+// 	mousePos = event.point;
+// }
+
+// function onMouseDown(event) {
+// 	smooth = !smooth;
+// 	if (!smooth) {
+// 		// If smooth has been turned off, we need to reset
+// 		// the handles of the path:
+// 		for (var i = 0, l = path.segments.length; i < l; i++) {
+// 			var segment = path.segments[i];
+// 			segment.handleIn = segment.handleOut = null;
+// 		}
+// 	}
+// }
+
+// // Reposition the path whenever the window is resized:
+// function onResize(event) {
+// 	initializePath();
+// }
+
