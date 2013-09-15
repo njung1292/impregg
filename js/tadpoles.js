@@ -1,135 +1,3 @@
-var randomInt = function(min, max) {
-	//inclusive, exclusive
-	return Math.floor(Math.random()*(max - min)+min);
-}
-
-var unveiled = false;
-var crackTaps = 0;
-var crackLimit = randomInt(7,14);
-var cracks = [];
-var shell;
-
-$('#myCanvas').on('click', function(e) {
-    if (!unveiled) {
-    	drawCracks();
-    	crackTaps++;
-    	if (crackTaps >= crackLimit) {
-    		unveiled = true;
-    		unveilPan();
-    	}
-    }
-});
-
-var drawShell = function() {
-	var rect = new Rectangle(new Point(0,0), view.size);
-	shell = new Path.Rectangle(rect);
-	shell.fillColor = '#000';
-}
-
-
-var drawCracks = function() {
-	console.log(event.pageX, event.pageY);
-	var initialX = event.pageX;
-	var initialY = event.pageY;
-
-	var numPoints = randomInt(3,14);
-	console.log(numPoints);
-
-	var points = [];
-	var centerX = initialX;
-	var centerY = initialY;
-
-	for (var i = 0; i < numPoints; i++) {
-		var x = randomInt(-70, 70);
-		var y = randomInt(-70, 70);
-		centerX += x;
-		centerY += y;
-
-		points.push(new Point(centerX, centerY));
-	}
-
-
-	for (var i = 0; i < points.length - 1; i++) {
-		var path = new Path.Line(points[i], points[i+1]);
-		path.strokeColor = '#fff';
-		path.strokeWidth = 2;
-
-		cracks.push(path);
-	}
-
-
-	// var p1 = new Point(centerX - 30, centerY - 30);
-	// var p2 = new Point(centerX + 30, centerY + 30);
-	
-	// var path = new Path.Line(p1, p2);
-	// path.strokeColor = '#fff';
-}
-
-var unveilPan = function() {
-	for (var i = 0; i < cracks.length; i++) {
-		cracks[i].remove();
-	}
-	shell.remove();
-}
-
-
-drawShell();
-
-console.log(view.size.width);
-
-//////////////
-
-
-var panRad = (view.size.height /2) -10;
-// The pan is a circle
-var pan = new Path.Circle({
-	center: view.center,
-	radius: (view.size.height /2)-10,
-	strokeColor: '#62A089',
-	fillColor: '#5F5E5D',
-	strokeWidth: 10
-});
-
-var count = 0;
-var position = view.center;
-var spiral = new Path({
-	fillColor: '#444'
-});
-
-while (position.y < (view.size.height)-25) {
-	count++;
-	var vector = new Point({
-		angle: count * 4,
-		length: count / 100
-	});
-	var rot = vector.rotate(90);
-	// var color = raster.getAverageColor(position + vector / 2);
-	// var value = color ? (1 - color.gray) * 3.7 : 0;
-	// console.error(value);
-	rot.length = 1
-	spiral.add(position + vector - rot);
-	spiral.insert(0, position + vector + rot);
-	position += vector;
-}
-
-function onKeyDown(event) {
-	if (event.key == 'z') {
-		// Scale the path by 110%:
-		spiral.scale(1.1);
-
-		// Prevent the key event from bubbling
-		return false;
-	}
-	if (event.key == 'x') {
-		spiral.scale(1.1);
-		return false;
-	}
-}
-
-function onFrame(event) {
-	// spiral.rotate(3);
-}
-/////////////////////////////////////////////////////////////////////////////////////////////
 // Adapted from Flocking Processing example by Daniel Schiffman:
 // http://processing.org/learning/topics/flocking.html
 
@@ -216,10 +84,10 @@ var Boid = Base.extend({
 	// We accumulate a new acceleration each time based on three rules
 	flock: function(boids) {
 		this.calculateDistances(boids);
-		// var separation = this.separate(boids) * 3;
+		var separation = this.separate(boids) * 3;
 		var alignment = this.align(boids);
 		var cohesion = this.cohesion(boids);
-		this.acceleration += cohesion; //+ alignment + separation
+		this.acceleration += separation + cohesion; //+ alignment
 	},
 
 	calculateDistances: function(boids) {
@@ -368,13 +236,10 @@ var groupTogether = false;
 
 // Add the boids:
 for (var i = 0; i < 30; i++) {
-    var rad = panRad; //Set to radius of pan
+    var rad = 200; //Set to radius of pan
     var angle = Math.random() * 2 * Math.PI;
     var x = Math.cos(angle) * rad;
     var y = Math.sin(angle) * rad;
-    console.log("radius: " + pan.radius);
-    console.log(x);
-    console.log(y);
     var point2 = new Point(x, y);
     var position = view.center + point2;
     console.log("center = " + view.center.toString());
