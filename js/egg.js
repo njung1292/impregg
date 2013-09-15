@@ -38,8 +38,11 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
             this.createEgg();
             this.createMasses();
             this.createSprings();
+            this.initEgg();
+            this.time = 0;
         },
 
+        DROP_TIME: 60,
         NUM_POINTS: 10,
         MAX_ITERS: 3,
         WHITE_STR: 0.01,
@@ -132,7 +135,30 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
             }
         },
 
-        update: function() {
+        initEgg: function () {
+            this.path.scale(10);
+            this.path.smooth();
+            this.yolk.scale(10);
+        },
+
+        update: function () {
+            if (this.time < this.DROP_TIME) {
+                console.log("dropping");
+                this.updateDrop();
+                this.time++;
+            }
+            else {
+                this.updatePhysics();
+            }
+
+        },
+
+        updateDrop: function() {
+            this.path.scale(0.954);
+            this.yolk.scale(0.962);
+        },
+
+        updatePhysics: function() {
             var nPnts = this.NUM_POINTS;
             for (var i = 0; i <= nPnts; i++) {
                 this.masses[i].update(this);
@@ -141,7 +167,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
                 for (var i = 0; i < this.springs.length; i++) {
                     this.springs[i].update(this);
                 }
-                for (var i = 0; i < nPnts; i++) {
+                for (var i = 0; i <= nPnts; i++) {
                     this.masses[i].collide(this, view.center, this.PAN_RADIUS);
                 }
             }
@@ -167,15 +193,9 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
                 }
                 this.masses[this.NUM_POINTS].setVelocity(force);
             }
-        },
-
-        pull: function(point) {
-            var force = this.yolk.position;
-
         }
     };
 
-    //uncomment this to test;
     EGG.init();
 
     function onFrame(event) {
