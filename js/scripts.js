@@ -26,11 +26,11 @@
 
 // Create a circle shaped path with its center at the center
 // of the view and a radius of 30:
-var path = new Path.Circle({
-	center: view.center,
-	radius: 250,
-	strokeColor: 'black'
-});
+// var circle = new Path.Circle({
+// 	center: view.center,
+// 	radius: 250,
+// 	strokeColor: 'black'
+// });
 
 // //var path = new Path.Circle(view.bounds.center, 30);
 // path.fillColor = 'red';
@@ -39,4 +39,5 @@ var path = new Path.Circle({
 // 	// Whenever the window is resized, recenter the path:
 // 	path.position = view.center;
 // }
+
 
