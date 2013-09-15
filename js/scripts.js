@@ -312,7 +312,7 @@ var boids = [];
 var colors = ["#EC6363", "#BDEBCA", "#D7F0D3", "#A1DBDD", "#FEE58C", "#FF703F", "white"];
 var groupTogether = false;
 
-// Add the boids:
+//Add the boids:
 function addBoids (int) {
 	for (var i = 0; i < int; i++) {
     var rad = panRad; //Set to radius of pan
@@ -330,7 +330,42 @@ function addBoids (int) {
 	}
 }
 
-addBoids(30);
+var tadpolesAppear = $.Deferred();
+
+tadpolesAppear.done(function() {
+	console.log('drawing tadpoles');
+
+	var timeToWaitBeforeTadpolesPopup = 5000;
+	
+	setTimeout(function() {
+		// for (var i = 0; i < 30; i++) {
+		//     var rad = panRad; //Set to radius of pan
+		//     var angle = Math.random() * 2 * Math.PI;
+		//     var x = Math.cos(angle) * rad;
+		//     var y = Math.sin(angle) * rad;
+		//     // console.log("radius: " + pan.radius);
+		//     // console.log(x);
+		//     // console.log(y);
+		//     var point2 = new Point(x, y);
+		//     var position = view.center + point2;
+		//     // console.log("center = " + view.center.toString());
+		//     // console.log("position = " + position.toString());
+		//     boids.push(new Boid(position, 10, 0.05));
+		// }
+		addBoids(30);
+
+
+		$('.real-alien-sound')[0].play();
+
+		setTimeout(function() {
+			$('.what-the-sound')[0].play();
+		}, 500);
+
+	}, timeToWaitBeforeTadpolesPopup);
+});
+
+
+//addBoids(30);
 var doanim = 0;
 var moveback = false;
 function onFrame(event) {
@@ -403,10 +438,18 @@ var crackTaps = 0;
 var crackLimit = randomInt(7,14);
 var cracks = [];
 var shell;
+var previousCrack;
 
 $('#myCanvas').on('click', function(e) {
     if (!unveiled) {
     	drawCracks();
+    	// if (previousCrack) {
+    	// 	for (var i = 0; i < previousCrack.length; i++) {
+    	// 		previousCrack[i].remove();
+    	// 	}
+    	// }
+    	// previousCrack = drawShell();
+    	// console.log(previousCrack);
     	crackTaps++;
     	if (crackTaps >= crackLimit) {
     		unveiled = true;
@@ -416,9 +459,65 @@ $('#myCanvas').on('click', function(e) {
 });
 
 var drawShell = function() {
-	var rect = new Rectangle(new Point(0,0), view.size);
-	shell = new Path.Rectangle(rect);
-	shell.fillColor = '#000';
+	// var rect = new Rectangle(new Point(0,0), view.size);
+	// shell = new Path.Rectangle(rect);
+	// shell.fillColor = '#000';
+
+	center = view.center;
+	width = view.size.width;
+	height = view.size.height;
+
+	var x = center.x;
+	var y = center.y;
+
+	// var x = event.pageX
+	// var y = event.pageY
+
+	//left below - bottom
+	var centerP1 = new Point((x - randomInt(10,50)), (y + randomInt(10,50))); 
+	var endP1 = new Point(randomInt(0,width/2), height);
+	var cornerP1 = new Point(0,height);
+	//left above - left
+	var centerP2 = new Point((x - randomInt(10,50)), (y - randomInt(10,50)));
+	var endP2 = new Point(0, randomInt(0,width/2));
+	var cornerP2 = new Point(0,0);
+	//right below - right
+	var centerP3 = new Point((x + randomInt(10,50)), (y + randomInt(10,50))); 
+	var endP3 = new Point(width, randomInt(height/2, height));
+	var cornerP3 = new Point(width,height);
+	//right above - top
+	var centerP4 = new Point((x + randomInt(10,50)), (y - randomInt(10,50)));
+	var endP4 = new Point(randomInt(width/2, width),0);
+	var cornerP4 = new Point(width,0);
+
+
+	var points1 = [cornerP1, endP1, centerP1, centerP2, endP2];
+	// var points2 = [cornerP2, endP4, centerP4, centerP2, endP2];
+	var points2 = [cornerP2, endP4, centerP4, centerP3, centerP1, centerP2, endP2];
+	var points3 = [cornerP3, endP3, centerP3, centerP1, endP1];
+	var points4 = [cornerP4, endP3, centerP3, centerP4, endP4];
+	
+	var crack1 = drawShellChunk(points1);
+	var crack2 = drawShellChunk(points2);
+	var crack3 = drawShellChunk(points3);
+	var crack4 = drawShellChunk(points4);
+
+	console.log(crack1);
+
+	return [crack1,crack2,crack3,crack4];
+}
+
+var drawShellChunk = function(points) {
+	var path = new Path();
+	for (var i = 0; i < points.length; i++) {
+		point = points[i];
+		path.add(point);
+	}
+	path.fillColor = new Color(0,0,0,1);
+	// path.strokeColor = '#fff';
+	// path.strokeWidth = 1;
+
+	return path;
 }
 
 
@@ -427,7 +526,7 @@ var drawCracks = function() {
 	var initialX = event.pageX;
 	var initialY = event.pageY;
 
-	var numPoints = randomInt(3,14);
+	var numPoints = randomInt(3,11);
 	console.log(numPoints);
 
 	var points = [];
@@ -447,7 +546,7 @@ var drawCracks = function() {
 	for (var i = 0; i < points.length - 1; i++) {
 		var path = new Path.Line(points[i], points[i+1]);
 		path.strokeColor = '#fff';
-		path.strokeWidth = 2;
+		path.strokeWidth = 1;
 
 		cracks.push(path);
 	}
@@ -457,24 +556,123 @@ var drawCracks = function() {
 	$(name)[0].play();
 }
 
+
 var unveilPan = function() {
+
 	for (var i = 0; i < cracks.length; i++) {
 		cracks[i].remove();
 	}
-	shell.remove();
-	$('.what-the-sound')[0].play();
-	$('.real-alien-sound')[0].play();
+	//shell.remove();
+
+
+	// $('.what-the-sound')[0].play();
+	// $('.real-alien-sound')[0].play();
+
+
+	// for (var i = 0; i < cracks.length; i++) {
+	// 	cracks[i].remove();
+	// }
+	//shell.remove();
+	
+	for (var i = 0; i < shell.length; i++) (function(n) {
+
+		var randomNum = (i === 0) ? 0 : randomInt(100, 2000);
+
+		setTimeout(function() {
+			shell[n].remove();
+			if (n === shell.length - 1) {
+				tadpolesAppear.resolve();
+			}
+
+			for (var i = 0; i < cracks.length; i++) {
+				cracks[i].remove();
+			}
+
+		}, randomNum);
+
+		
+	})(i);
 }
 
 
-drawShell();
+shell = drawShell();
 
 console.log(view.size.width);
 
 
+///////// DIS BE THE WAVES LALALAL /////
+
+// var width, height, center;
+// var points = 10;
+// var smooth = true;
+// var path = new Path();
+// var mousePos = view.center / 2;
+// var pathHeight = mousePos.y;
+// path.fillColor = 'black';
+// initializePath();
+
+// function initializePath() {
+// 	center = view.center;
+// 	width = view.size.width;
+// 	height = view.size.height / 2;
+// 	path.segments = [];
+// 	path.add(view.bounds.bottomLeft);
+// 	for (var i = 1; i < points; i++) {
+// 		var point = new Point(width / points * i, center.y);
+// 		path.add(point);
+// 	}
+// 	path.add(view.bounds.bottomRight);
+// 	path.fullySelected = false;
+// 	path.strokeColor = '#fff';
+// 	path.strokeWidth = 2;
+// }
+
+function onFrame(event) {
+	// pathHeight += (center.y - mousePos.y - pathHeight) / 10;
+	// for (var i = 1; i < points; i++) {
+	// 	var sinSeed = event.count + (i + i % 10) * 100;
+	// 	var sinHeight = Math.sin(sinSeed / 200) * pathHeight;
+	// 	var yPos = Math.sin(sinSeed / 100) * sinHeight + height;
+	// 	path.segments[i].point.y = yPos;
+	// }
+	// if (smooth)
+	// 	path.smooth();
 
 
-// ///////// DIS BE THE WAVES LALALAL /////
+
+	//sperm
+	for (var i = 0, l = boids.length; i < l; i++) {
+		if (groupTogether) {
+			var length = ((i + event.count / 30) % l) / l * pathLength;
+			var point = heartPath.getPointAt(length);
+			if (point)
+				boids[i].arrive(point);
+		}
+		boids[i].run(boids);
+	}
+}
+
+// function onMouseMove(event) {
+// 	mousePos = event.point;
+// }
+
+// function onMouseDown(event) {
+// 	smooth = !smooth;
+// 	if (!smooth) {
+// 		// If smooth has been turned off, we need to reset
+// 		// the handles of the path:
+// 		for (var i = 0, l = path.segments.length; i < l; i++) {
+// 			var segment = path.segments[i];
+// 			segment.handleIn = segment.handleOut = null;
+// 		}
+// 	}
+// }
+
+// // Reposition the path whenever the window is resized:
+// function onResize(event) {
+// 	initializePath();
+// }
+
 
 // var width, height, center;
 // var points = 10;
@@ -547,3 +745,13 @@ console.log(view.size.width);
 // 	initializePath();
 // }
 
+
+// var diff = this.position - view.center;
+// 		var outsideOfPan = Math.pow((this.position.x - view.center), 2) + Math.pow((this.position.y - view.center), 2) > Math.pow(panRad, 2) 
+//         console.log("diff = " + diff);
+//         console.log("outside = " + outsideOfPan);
+//         if ((Math.abs(diff.x) < 1) && (Math.abs(diff.y) < 1) && (!outsideOfPan)) {
+// 			var i = boids.indexOf(this);
+// 			// console.error(i);
+// 			boids.splice(i,1);
+// 		}
