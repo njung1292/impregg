@@ -1,26 +1,43 @@
 window.IMPREGG || (IMPREGG = {}); //define a namespace
 
-(function($, window, document, undefined) {
+// (function($, window, document, undefined) {
   
-    var Mass = IMPREGG.Mass = function(p, friction) {
-        Mass.init(p, friction);
+    var Mass = IMPREGG.Mass = function(p, pID, friction) {
+
+        this.init(p, pID, friction);
     }
 
     Mass.prototype = {
-        init: function(p, friction){
-            this.pos = p;
-            this.oldPos = p;
+        init: function(p, pID, friction){
+            this.pID = pID;
+            this.oldPos = new Point(p);
             this.friction = friction;
         },
 
-        update: function(){
-            var tempPos = this.pos;
-            var velocity = this.pos - this.oldPos;
-            var frictionForce = this.friction * velocity/velocity.length;
-            velocity = max(velocity - frictionForce, 0);
-            this.pos += velocity;
-            this.oldPos = tempPos;
+        setVelocity: function(velocity) {
+            this.oldPos -= velocity;
+        },
+
+        update: function(egg){
+            var curPos = egg.getPoint(this.pID);
+            var velocity = curPos - this.oldPos;
+            if (velocity.length > this.friction) {
+                var frictionForce = velocity.normalize(this.friction);
+                velocity -= frictionForce;
+                egg.setPoint(this.pID, curPos + velocity);
+            }
+            this.oldPos = curPos;
+            return this;
+        },
+
+        collide: function(egg, center, radius) {
+            var curPos = egg.getPoint(this.pID);
+            var centerVector = curPos - center;
+            if (centerVector.length > radius) {
+                curPos = center + centerVector.normalize(radius);
+                egg.setPoint(this.pID, curPos);
+            }
         }
     }
-})(jQuery, window, document);
+// })(jQuery, window, document);
 
