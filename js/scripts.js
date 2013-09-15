@@ -232,8 +232,8 @@ var Boid = Base.extend({
 	// the target
 	steer: function(target, slowdown) {
 		slowdown = true;
-		var steer,
-			desired = view.center - this.position;
+		var steer, desired = IMPREGG.EGG.yolk.position;
+			// desired = view.center - this.position;
 		var distance = desired.length;
 		// Two options for desired vector magnitude
 		// (1 -- based on distance, 2 -- maxSpeed)
@@ -485,9 +485,9 @@ function onMouseDown(event) {
 
     
     var position = event.point;
-	boids.push(new Boid(position, 10, 0.05));
-    displaySalt(event);
-    displayPepper(event);
+	// boids.push(new Boid(position, 10, 0.05));
+    // displaySalt(event);
+    // displayPepper(event);
 
 	if (unveiled && startEggMouseDown) {
 	 //    var position = event.point;
