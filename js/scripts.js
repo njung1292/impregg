@@ -1,80 +1,7 @@
-var randomInt = function(min, max) {
-	//inclusive, exclusive
-	return Math.floor(Math.random()*(max - min)+min);
-}
-
 var unveiled = false;
-var crackTaps = 0;
-var crackLimit = randomInt(7,14);
-var cracks = [];
-var shell;
+var startEggAnimation = false;
+var startEggMouseDown = false;
 
-$('#myCanvas').on('click', function(e) {
-    if (!unveiled) {
-    	drawCracks();
-    	crackTaps++;
-    	if (crackTaps >= crackLimit) {
-    		unveiled = true;
-    		unveilPan();
-    	}
-    }
-});
-
-var drawShell = function() {
-	var rect = new Rectangle(new Point(0,0), view.size);
-	shell = new Path.Rectangle(rect);
-	shell.fillColor = '#000';
-}
-
-
-var drawCracks = function() {
-	var initialX = event.pageX;
-	var initialY = event.pageY;
-
-	var numPoints = randomInt(3,14);
-	
-	var points = [];
-	var centerX = initialX;
-	var centerY = initialY;
-
-	for (var i = 0; i < numPoints; i++) {
-		var x = randomInt(-70, 70);
-		var y = randomInt(-70, 70);
-		centerX += x;
-		centerY += y;
-
-		points.push(new Point(centerX, centerY));
-	}
-
-
-	for (var i = 0; i < points.length - 1; i++) {
-		var path = new Path.Line(points[i], points[i+1]);
-		path.strokeColor = '#fff';
-		path.strokeWidth = 2;
-
-		cracks.push(path);
-	}
-
-
-	// var p1 = new Point(centerX - 30, centerY - 30);
-	// var p2 = new Point(centerX + 30, centerY + 30);
-	
-	// var path = new Path.Line(p1, p2);
-	// path.strokeColor = '#fff';
-}
-
-var unveilPan = function() {
-	for (var i = 0; i < cracks.length; i++) {
-		cracks[i].remove();
-	}
-	shell.remove();
-}
-
-
-drawShell();
-
-
-////////////////////////////////////////////////////////////////////////////////////////////
 
 var panRad = (view.size.height /2) -10;
 // The pan is a circle
@@ -162,13 +89,6 @@ var Boid = Base.extend({
 		}
 	},
 
-	removeBoid: function() {
-		console.log('here');
-		this.head.remove();
-		this.path.remove();
-		this.shortPath.remove();
-	},
-
 	createItems: function() {
 		this.head = new Path.Ellipse({
 			from: [0,0],
@@ -208,9 +128,9 @@ var Boid = Base.extend({
 	flock: function(boids) {
 		this.calculateDistances(boids);
 		var separation = this.separate(boids) * 2;
-		var alignment = this.align(boids);	
+		// var alignment = this.align(boids);	
 		var cohesion = this.cohesion(boids);
-		this.acceleration += cohesion + separation + alignment; //+ alignment + separation
+		this.acceleration += cohesion + separation; //+ alignment + separation
 	},
 
 	calculateDistances: function(boids) {
@@ -278,7 +198,7 @@ var Boid = Base.extend({
 	// Takes a second argument, if true, it slows down as it approaches
 	// the target
 	steer: function(target, slowdown) {
-		// slowdown = true;	
+		slowdown = true;
 		var steer,
 			desired = view.center - this.position;
 		var distance = desired.length;
@@ -395,7 +315,7 @@ var pathLength = heartPath.length;
 var boids = [];
 var groupTogether = false;
 
-// Add the boids:
+//Add the boids:
 function addBoids (int) {
 	for (var i = 0; i < int; i++) {
     var rad = panRad; //Set to radius of pan
@@ -413,24 +333,61 @@ function addBoids (int) {
 	}
 }
 
-addBoids(30);
+var lastChunkCracked = $.Deferred();
+
+lastChunkCracked.done(function() {
+	console.log('drawing tadpoles');
+	//IMPREGG.EGG.init();
+	//startEggAnimation = true;
+
+	var timeToWaitBeforeTadpolesPopup = 5000;
+	
+	setTimeout(function() {
+		// for (var i = 0; i < 30; i++) {
+		//     var rad = panRad; //Set to radius of pan
+		//     var angle = Math.random() * 2 * Math.PI;
+		//     var x = Math.cos(angle) * rad;
+		//     var y = Math.sin(angle) * rad;
+		//     // console.log("radius: " + pan.radius);
+		//     // console.log(x);
+		//     // console.log(y);
+		//     var point2 = new Point(x, y);
+		//     var position = view.center + point2;
+		//     // console.log("center = " + view.center.toString());
+		//     // console.log("position = " + position.toString());
+		//     boids.push(new Boid(position, 10, 0.05));
+		// }
+		addBoids(30);
+
+
+		$('.real-alien-sound')[0].play();
+
+		setTimeout(function() {
+			$('.what-the-sound')[0].play();
+		}, 500);
+
+	}, timeToWaitBeforeTadpolesPopup);
+});
+
+
+//addBoids(30);
 var doanim = 0;
 var moveback = false;
-function onFrame(event) {
-	// if ((Math.floor(event.count) % 300 === 100) && boids.length<20) {
-	// 	addBoids(10);
-	// }
-	for (var i = 0, l = boids.length; i < l; i++) {
-		if (groupTogether) {
-			var length = ((i + event.count / 30) % l) / l * pathLength;
-			var point = heartPath.getPointAt(length);
-			if (point)
-				boids[i].arrive(point);
-		}
-		boids[i].run(boids);
-	}
+// function onFrame(event) {
+// 	// if ((Math.floor(event.count) % 300 === 100) && boids.length<20) {
+// 	// 	addBoids(10);
+// 	// }
+// 	for (var i = 0, l = boids.length; i < l; i++) {
+// 		if (groupTogether) {
+// 			var length = ((i + event.count / 30) % l) / l * pathLength;
+// 			var point = heartPath.getPointAt(length);
+// 			if (point)
+// 				boids[i].arrive(point);
+// 		}
+// 		boids[i].run(boids);
+// 	}
 
-}
+// }
 
 // Reposition the heart path whenever the window is resized:
 function onResize(event) {
@@ -466,13 +423,23 @@ function displayPepper(event) {
 }
 
 function onMouseDown(event) {
+
     
     var position = event.point;
 	boids.push(new Boid(position, 10, 0.05));
     displaySalt(event);
     displayPepper(event);
-}
 
+	if (unveiled && startEggMouseDown) {
+	 //    var position = event.point;
+		// boids.push(new Boid(position, 10, 0.05));
+		var touchedYolk = IMPREGG.EGG.pushYolk(event.point);
+		if (touchedYolk) {
+			$('.dying2-sound')[0].play();
+		}
+	} 
+
+}
 
 function onKeyDown(event) {
 	if (event.key == 'space') {
@@ -483,16 +450,397 @@ function onKeyDown(event) {
 	if (event.key == 'a') {
 		console.error(boids.length);
 	}
-	if (event.key == 'b') {
-		console.error('whoo');
-		var tmp = boids.pop();
-		tmp.head.remove();
-		tmp.path.remove();
-		tmp.shortPath.remove();
-		console.error('huh');
-		console.error(boids.length)
-	}
+	// if (event.key == 'b') {
+	// 	console.error('whoo');
+	// 	var tmp = boids.pop();
+	// 	tmp.head.remove();
+	// 	tmp.path.remove();
+	// 	tmp.shortPath.remove();
+	// 	console.error('huh');
+	// 	console.error(boids.length)
+	// }
 	if (event.key == 'z') {
 		groupTogether = true;
 	}
 }
+
+/////////////// MESSY CODE I KNOW. these be the cracks ////////////
+var randomInt = function(min, max) {
+	//inclusive, exclusive
+	return Math.floor(Math.random()*(max - min)+min);
+}
+
+var crackTaps = 0;
+var crackLimit = randomInt(7,14);
+var cracks = [];
+var shell;
+var previousCrack;
+
+$('#myCanvas').on('click', function(e) {
+    if (!unveiled) {
+    	drawCracks();
+    	// if (previousCrack) {
+    	// 	for (var i = 0; i < previousCrack.length; i++) {
+    	// 		previousCrack[i].remove();
+    	// 	}
+    	// }
+    	// previousCrack = drawShell();
+    	// console.log(previousCrack);
+    	crackTaps++;
+    	if (crackTaps >= crackLimit) {
+    		unveiled = true;
+    		unveilPan();
+    	}
+    }
+});
+
+var drawShell = function() {
+	// var rect = new Rectangle(new Point(0,0), view.size);
+	// shell = new Path.Rectangle(rect);
+	// shell.fillColor = '#000';
+
+	center = view.center;
+	width = view.size.width;
+	height = view.size.height;
+
+	var x = center.x;
+	var y = center.y;
+
+	// var x = event.pageX
+	// var y = event.pageY
+
+	//left below - bottom
+	var centerP1 = new Point((x - randomInt(10,50)), (y + randomInt(10,50))); 
+	var endP1 = new Point(randomInt(0,width/2), height);
+	var cornerP1 = new Point(0,height);
+	//left above - left
+	var centerP2 = new Point((x - randomInt(10,50)), (y - randomInt(10,50)));
+	var endP2 = new Point(0, randomInt(0,width/2));
+	var cornerP2 = new Point(0,0);
+	//right below - right
+	var centerP3 = new Point((x + randomInt(10,50)), (y + randomInt(10,50))); 
+	var endP3 = new Point(width, randomInt(height/2, height));
+	var cornerP3 = new Point(width,height);
+	//right above - top
+	var centerP4 = new Point((x + randomInt(10,50)), (y - randomInt(10,50)));
+	var endP4 = new Point(randomInt(width/2, width),0);
+	var cornerP4 = new Point(width,0);
+
+
+	var points1 = [cornerP1, endP1, centerP1, centerP2, endP2];
+	// var points2 = [cornerP2, endP4, centerP4, centerP2, endP2];
+	var points2 = [cornerP2, endP4, centerP4, centerP3, centerP1, centerP2, endP2];
+	var points3 = [cornerP3, endP3, centerP3, centerP1, endP1];
+	var points4 = [cornerP4, endP3, centerP3, centerP4, endP4];
+	
+	var crack1 = drawShellChunk(points1);
+	var crack2 = drawShellChunk(points2);
+	var crack3 = drawShellChunk(points3);
+	var crack4 = drawShellChunk(points4);
+
+	console.log(crack1);
+
+	return [crack1,crack2,crack3,crack4];
+}
+
+var drawShellChunk = function(points) {
+	var path = new Path();
+	for (var i = 0; i < points.length; i++) {
+		point = points[i];
+		path.add(point);
+	}
+	path.fillColor = new Color(0,0,0,1);
+	// path.strokeColor = '#fff';
+	// path.strokeWidth = 1;
+
+	return path;
+}
+
+var drawCracks = function() {
+	console.log(event.pageX, event.pageY);
+	var initialX = event.pageX;
+	var initialY = event.pageY;
+
+	var numPoints = randomInt(3,11);
+	console.log(numPoints);
+
+	var points = [];
+	var centerX = initialX;
+	var centerY = initialY;
+
+	for (var i = 0; i < numPoints; i++) {
+		var x = randomInt(-70, 70);
+		var y = randomInt(-70, 70);
+		centerX += x;
+		centerY += y;
+
+		points.push(new Point(centerX, centerY));
+	}
+
+
+	for (var i = 0; i < points.length - 1; i++) {
+		var path = new Path.Line(points[i], points[i+1]);
+		path.strokeColor = '#fff';
+		path.strokeWidth = 1;
+
+		cracks.push(path);
+	}
+
+	var trackNumber = randomInt(1,8);
+	var name = '.crack'+trackNumber+'-sound';
+	$(name)[0].play();
+}
+
+
+var startNoelleSizzle = function() {
+	// (function(randomNumber) {
+	setTimeout(function() {
+		$('.noelle-sizzle-sound')[0].play();
+		console.log('noelle sizzled');
+		startDavidSizzle();
+	}, randomInt(5000, 12000));	
+	// })(noelleRandom);
+	// noelleRandom = randomInt(6000, 14000);
+}
+
+var startDavidSizzle = function() {
+	// (function(randomNumber) {
+	setTimeout(function() {
+		$('.david-sizzle-sound')[0].play();
+		console.log('david sizzled');
+		startNoelleSizzle();
+	}, randomInt(5000, 12000));	
+	// })(davidRandom);
+	// davidRandom = randomInt(6000, 14000);
+}
+
+
+var unveilPan = function() {
+
+	console.log('unveiling pan');
+
+	for (var i = 0; i < cracks.length; i++) {
+		cracks[i].remove();
+	}
+	//shell.remove();
+
+
+	// $('.what-the-sound')[0].play();
+	// $('.real-alien-sound')[0].play();
+
+
+	// for (var i = 0; i < cracks.length; i++) {
+	// 	cracks[i].remove();
+	// }
+	//shell.remove();
+
+
+	var hasBeenSeen = false;
+	for (var i = 0; i < shell.length; i++) (function(n) {
+
+		var randomNum = (i === 0) ? 0 : randomInt(100, 1000);
+
+		if (i === 0 || !hasBeenSeen) {
+			hasBeenSeen = true;
+			IMPREGG.EGG.init();
+			startEggAnimation = true;
+			$('.slosh-sound')[0].play();
+			setTimeout(function() {
+				console.log('playing sounds');
+				startEggMouseDown = true;
+				$('.sizzle1-sound')[0].play();
+				startDavidSizzle();
+				startNoelleSizzle();
+			}, 1000);
+		}
+
+		setTimeout(function() {
+			shell[n].remove();
+			if (n === shell.length - 1) {
+				lastChunkCracked.resolve();
+			}
+
+			for (var i = 0; i < cracks.length; i++) {
+				cracks[i].remove();
+			}
+
+		}, randomNum);
+
+		
+	})(i);
+}
+
+
+shell = drawShell();
+
+console.log(view.size.width);
+
+
+///////// DIS BE THE WAVES LALALAL /////
+
+// var width, height, center;
+// var points = 10;
+// var smooth = true;
+// var path = new Path();
+// var mousePos = view.center / 2;
+// var pathHeight = mousePos.y;
+// path.fillColor = 'black';
+// initializePath();
+
+// function initializePath() {
+// 	center = view.center;
+// 	width = view.size.width;
+// 	height = view.size.height / 2;
+// 	path.segments = [];
+// 	path.add(view.bounds.bottomLeft);
+// 	for (var i = 1; i < points; i++) {
+// 		var point = new Point(width / points * i, center.y);
+// 		path.add(point);
+// 	}
+// 	path.add(view.bounds.bottomRight);
+// 	path.fullySelected = false;
+// 	path.strokeColor = '#fff';
+// 	path.strokeWidth = 2;
+// }
+
+
+
+function onFrame(event) {
+	// pathHeight += (center.y - mousePos.y - pathHeight) / 10;
+	// for (var i = 1; i < points; i++) {
+	// 	var sinSeed = event.count + (i + i % 10) * 100;
+	// 	var sinHeight = Math.sin(sinSeed / 200) * pathHeight;
+	// 	var yPos = Math.sin(sinSeed / 100) * sinHeight + height;
+	// 	path.segments[i].point.y = yPos;
+	// }
+	// if (smooth)
+	// 	path.smooth();
+
+
+
+	//sperm
+	for (var i = 0, l = boids.length; i < l; i++) {
+		if (groupTogether) {
+			var length = ((i + event.count / 30) % l) / l * pathLength;
+			var point = heartPath.getPointAt(length);
+			if (point)
+				boids[i].arrive(point);
+		}
+		boids[i].run(boids);
+	}
+
+	if (startEggAnimation) {
+		IMPREGG.EGG.update();
+	}
+}
+
+// function onMouseDown(event) {
+//     IMPREGG.EGG.pushYolk(event.point);
+// }
+
+// function onMouseMove(event) {
+// 	mousePos = event.point;
+// }
+
+// function onMouseDown(event) {
+// 	smooth = !smooth;
+// 	if (!smooth) {
+// 		// If smooth has been turned off, we need to reset
+// 		// the handles of the path:
+// 		for (var i = 0, l = path.segments.length; i < l; i++) {
+// 			var segment = path.segments[i];
+// 			segment.handleIn = segment.handleOut = null;
+// 		}
+// 	}
+// }
+
+// // Reposition the path whenever the window is resized:
+// function onResize(event) {
+// 	initializePath();
+// }
+
+
+// ///////// DIS BE THE WAVES LALALAL /////
+
+
+// var width, height, center;
+// var points = 10;
+// var smooth = true;
+// var path = new Path();
+// var mousePos = view.center / 2;
+// var pathHeight = mousePos.y;
+// path.fillColor = 'black';
+// initializePath();
+
+// function initializePath() {
+// 	center = view.center;
+// 	width = view.size.width;
+// 	height = view.size.height / 2;
+// 	path.segments = [];
+// 	path.add(view.bounds.bottomLeft);
+// 	for (var i = 1; i < points; i++) {
+// 		var point = new Point(width / points * i, center.y);
+// 		path.add(point);
+// 	}
+// 	path.add(view.bounds.bottomRight);
+// 	path.fullySelected = false;
+// 	path.strokeColor = '#fff';
+// 	path.strokeWidth = 2;
+// }
+
+// function onFrame(event) {
+// 	pathHeight += (center.y - mousePos.y - pathHeight) / 10;
+// 	for (var i = 1; i < points; i++) {
+// 		var sinSeed = event.count + (i + i % 10) * 100;
+// 		var sinHeight = Math.sin(sinSeed / 200) * pathHeight;
+// 		var yPos = Math.sin(sinSeed / 100) * sinHeight + height;
+// 		path.segments[i].point.y = yPos;
+// 	}
+// 	if (smooth)
+// 		path.smooth();
+
+
+
+// 	//sperm
+// 	for (var i = 0, l = boids.length; i < l; i++) {
+// 		if (groupTogether) {
+// 			var length = ((i + event.count / 30) % l) / l * pathLength;
+// 			var point = heartPath.getPointAt(length);
+// 			if (point)
+// 				boids[i].arrive(point);
+// 		}
+// 		boids[i].run(boids);
+// 	}
+// }
+
+// function onMouseMove(event) {
+// 	mousePos = event.point;
+// }
+
+// function onMouseDown(event) {
+// 	smooth = !smooth;
+// 	if (!smooth) {
+// 		// If smooth has been turned off, we need to reset
+// 		// the handles of the path:
+// 		for (var i = 0, l = path.segments.length; i < l; i++) {
+// 			var segment = path.segments[i];
+// 			segment.handleIn = segment.handleOut = null;
+// 		}
+// 	}
+// }
+
+// // Reposition the path whenever the window is resized:
+// function onResize(event) {
+// 	initializePath();
+// }
+
+
+// var diff = this.position - view.center;
+// 		var outsideOfPan = Math.pow((this.position.x - view.center), 2) + Math.pow((this.position.y - view.center), 2) > Math.pow(panRad, 2) 
+//         console.log("diff = " + diff);
+//         console.log("outside = " + outsideOfPan);
+//         if ((Math.abs(diff.x) < 1) && (Math.abs(diff.y) < 1) && (!outsideOfPan)) {
+// 			var i = boids.indexOf(this);
+// 			// console.error(i);
+// 			boids.splice(i,1);
+// 		}
