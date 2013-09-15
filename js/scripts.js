@@ -1,7 +1,5 @@
 var unveiled = false;
 
-////////////////////////////////////////////////////////////////////////////////////////////
-
 var panRad = (view.size.height /2) -10;
 // The pan is a circle
 var pan = new Path.Circle({
@@ -86,13 +84,6 @@ var Boid = Base.extend({
 			points[i] = point + rotated;
 			lastVector = vector;
 		}
-	},
-
-	removeBoid: function() {
-		console.log('here');
-		this.head.remove();
-		this.path.remove();
-		this.shortPath.remove();
 	},
 
 	createItems: function() {
@@ -309,7 +300,6 @@ var heartPath = Project.importJSON('["Path",{"pathData":"M514.69629,624.70313c-7
 var pathLength = heartPath.length;
 
 var boids = [];
-var colors = ["#EC6363", "#BDEBCA", "#D7F0D3", "#A1DBDD", "#FEE58C", "#FF703F", "white"];
 var groupTogether = false;
 
 //Add the boids:
@@ -398,7 +388,6 @@ function onMouseDown(event) {
 	} 
 }
 
-
 function onKeyDown(event) {
 	if (event.key == 'space') {
 		var layer = project.activeLayer;
@@ -423,16 +412,10 @@ function onKeyDown(event) {
 }
 
 /////////////// MESSY CODE I KNOW. these be the cracks ////////////
-
-
-
-
-
 var randomInt = function(min, max) {
 	//inclusive, exclusive
 	return Math.floor(Math.random()*(max - min)+min);
 }
-
 
 var crackTaps = 0;
 var crackLimit = randomInt(7,14);
@@ -519,7 +502,6 @@ var drawShellChunk = function(points) {
 
 	return path;
 }
-
 
 var drawCracks = function() {
 	console.log(event.pageX, event.pageY);
@@ -672,6 +654,9 @@ function onFrame(event) {
 // function onResize(event) {
 // 	initializePath();
 // }
+
+
+// ///////// DIS BE THE WAVES LALALAL /////
 
 
 // var width, height, center;
