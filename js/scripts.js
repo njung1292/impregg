@@ -28,13 +28,11 @@ var drawShell = function() {
 
 
 var drawCracks = function() {
-	console.log(event.pageX, event.pageY);
 	var initialX = event.pageX;
 	var initialY = event.pageY;
 
 	var numPoints = randomInt(3,14);
-	console.log(numPoints);
-
+	
 	var points = [];
 	var centerX = initialX;
 	var centerY = initialY;
@@ -75,7 +73,6 @@ var unveilPan = function() {
 
 drawShell();
 
-console.log(view.size.width);
 
 //////////////
 
@@ -407,8 +404,22 @@ function onResize(event) {
 }
 
 function onMouseDown(event) {
+    
     var position = event.point;
 	boids.push(new Boid(position, 10, 0.05));
+    for (var i = 0, l = boids.length; i < l; i++) {
+        position = boids[i].position;
+        console.log("position = " + position);
+        var diff = position - view.center;
+		var outsideOfPan = Math.pow((position.x - view.center), 2) + Math.pow((position.y - view.center), 2) > Math.pow(panRad, 2) 
+        console.log("diff = " + diff);
+        console.log("outside = " + outsideOfPan);
+        if ((Math.abs(diff.x) < 1) && (Math.abs(diff.y) < 1) && (!outsideOfPan)) {
+			//var i = boids.indexOf(this);
+			// console.error(i);
+			boids.splice(i,1);
+		}
+    }
 }
 
 
@@ -426,13 +437,4 @@ function onKeyDown(event) {
 		boids.push(new Boid(pos, 10,0.05));
 	}
 }
-var diff = this.position - view.center;
-		var outsideOfPan = Math.pow((this.position.x - view.center), 2) + Math.pow((this.position.y - view.center), 2) > Math.pow(panRad, 2) 
-        console.log("diff = " + diff);
-        console.log("outside = " + outsideOfPan);
-        if ((Math.abs(diff.x) < 1) && (Math.abs(diff.y) < 1) && (!outsideOfPan)) {
-			var i = boids.indexOf(this);
-			// console.error(i);
-			boids.splice(i,1);
-		}
         
