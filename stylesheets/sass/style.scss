@@ -17,12 +17,29 @@ canvas {
 	overflow: hidden;
 	
 	//background-color: #000;
-	background: image-url("gold_scale.png");
+	background: image-url('gold_scale.png');
 
 	// .unveiled {
 	// 	//: #000;
 	// 	background-image: image-url("gold_scale.png");
 	// }
+}
+
+#pepper {
+	
+	width: 100px;
+	height: 180px;
+	position: absolute;
+	right: 50px;
+	top: 100px;
+
+	&.shown {
+		background-image: image-url('pepper-small.png');
+	}
+}
+
+#salt {
+
 }
 
 // #myCanvas {

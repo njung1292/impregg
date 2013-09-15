@@ -391,7 +391,20 @@ lastChunkCracked.done(function() {
 	//IMPREGG.EGG.init();
 	//startEggAnimation = true;
 
-	var timeToWaitBeforeTadpolesPopup = 5000;
+	$('#pepper').addClass('shown');
+
+	$('#salt').addClass('shown');
+
+
+	$('#salt').on('click', function() {
+		saltSelected = true ? false : true;
+	});
+
+	$('#pepper').on('click', function() {
+		pepperSelected = true ? false : true;
+	});
+
+	var timeToWaitBeforeTadpolesPopup = 7000;
 	
 	setTimeout(function() {
 		// for (var i = 0; i < 30; i++) {
@@ -440,11 +453,11 @@ var moveback = false;
 
 // }
 //////////////////////////////////////////////////////////////////////////////////////////////
-var pepper = new Raster("images/pepper.png")
-pepper.scale(0.2);
-pepper.position = new Point(0.9 * view.size.width, view.size.height/2);
-console.log("x: " + pepper.position.x);
-console.log("y: " + pepper.position.y);
+// var pepper = new Raster("images/pepper-small.png")
+// pepper.scale(0.2);
+// pepper.position = new Point(0.9 * view.size.width, view.size.height/2);
+// console.log("x: " + pepper.position.x);
+// console.log("y: " + pepper.position.y);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -476,7 +489,7 @@ function displayPepper(event) {
         var point = new Point(position.x + randomInt(-11, 11), position.y + randomInt(-11, 11));
         var size = new Size(3, 3);
         var square = new Shape.Rectangle(point, size);
-        square.fillColor = "#6C5319";
+        square.fillColor = "#55443D";
         setTimeout(function() {
             square.remove();
         }, randomInt(1000, 2000));
@@ -700,13 +713,9 @@ var unveilPan = function() {
 	// }
 	//shell.remove();
 
-	$('#salt').on('click', function() {
-		saltSelected = true;
-	});
+	// $('<div id="#pepper"></div>').insertAfter('#myCanvas');
 
-	$('#pepper').on('click', function() {
-		pepperSelected = true;
-	});
+
 
 	var hasBeenSeen = false;
 	for (var i = 0; i < shell.length; i++) (function(n) {
