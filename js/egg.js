@@ -1,12 +1,13 @@
 window.IMPREGG || (IMPREGG = {}); //define a namespace
 
-(function($, window, document, undefined) {
+// (function($, window, document, undefined) {
   
     var EGG = IMPREGG.EGG = { //this is your js object
         init: function() {
             this.createEgg();
-            this.createsMasses();
+            this.createMasses();
             this.bindEvents();
+            this.yolk.position = view.center - new Point(100, 100);
         },
 
         NUMBER_OF_POINTS: 10,
@@ -35,7 +36,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
                 closed: true
             });
             var center = view.center;
-            var delta = new Point(WHITES_RADIUS, 0);
+            var delta = new Point(this.WHITES_RADIUS, 0);
             for (var i = 0; i < this.NUMBER_OF_POINTS; i++) {
                 var segment = path.add(center + delta);
                 var point = segment.point;
@@ -54,7 +55,8 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         createSprings: function() {
             var springs = [];
             var segments = this.path.segments;
-            for (var segment in segments) {
+            for (var i = 0; i < segments.length; i++) {
+                var segment = segments[i];
                 var a = segment.point;
                 var b = segment.next.point;
                 springs.push(this.createSpring(a,b));
@@ -67,28 +69,45 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         },
 
         createSpring: function(a, b) {
-            return new Spring(a, b, (a - b).length, this.STIFFNESS);
+            return new IMPREGG.Spring(a, b, (a - b).length, this.STIFFNESS);
         },
 
         createMasses: function() {
             this.masses = [];
-            masses.push(new Mass(this.yolk.position), this.FRICTION);
-            for (var segment in this.segments) {
-                masses.push(new Mass(this.segment.point), this.FRICTION);
+            var segments = this.path.segments;
+            for (var i = 0; i < segments.length; i++) {
+                var segment = segments[i];
+                var p = segment.point;
+                var newMass = new IMPREGG.Mass(p, this.FRICTION);
+                this.masses.push(newMass);
             }
+            this.masses.push(new IMPREGG.Mass(this.yolk.position, this.FRICTION));
         },
 
         update: function() {
-            for (var mass in this.masses) {
+
+            //this.masses[0].pos.x += 1;
+            for (var i = 0; i < this.masses.length; i++) {
+                var mass = this.masses[i];
                 mass.update();
             }
-            for (var spring in this.springs) {
+
+            for (var i = 0; i < this.springs.length; i++) {
+                var spring = this.springs[i];
                 spring.update();
             }
+
+            this.path.smooth();
         }
-    }
+    };
 
     //uncomment this to test;
-    //EXAMPLE.init();
+    EGG.init();
 
-})(jQuery, window, document);
+
+    function onFrame(event) {
+        EGG.update();
+        console.log("8D");
+    }
+
+// })(jQuery, window, document);

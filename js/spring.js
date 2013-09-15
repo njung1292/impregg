@@ -1,9 +1,9 @@
 window.IMPREGG || (IMPREGG = {}); //define a namespace
 
-(function($, window, document, undefined) {
+// (function($, window, document, undefined) {
   
     var Spring = IMPREGG.Spring = function(a, b, restLength, strength) {
-        Spring.init(a, b, restLength, strength);
+        this.init(a, b, restLength, strength);
     }
 
     Spring.prototype = {
@@ -23,5 +23,5 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
             this.b -= adjustment;
         }
     }
-})(jQuery, window, document);
+// })(jQuery, window, document);
 
