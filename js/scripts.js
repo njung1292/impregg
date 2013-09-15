@@ -390,7 +390,10 @@ function onMouseDown(event) {
 	if (unveiled && startEggMouseDown) {
 	 //    var position = event.point;
 		// boids.push(new Boid(position, 10, 0.05));
-		IMPREGG.EGG.pushYolk(event.point);
+		var touchedYolk = IMPREGG.EGG.pushYolk(event.point);
+		if (touchedYolk) {
+			$('.dying2-sound')[0].play();
+		}
 	} 
 }
 
