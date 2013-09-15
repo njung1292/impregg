@@ -34,25 +34,21 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
   
     var EGG = IMPREGG.EGG = { //this is your js object
         init: function() {
+            this.PAN_RADIUS = 150;
             this.createEgg();
             this.createMasses();
             this.createSprings();
-            this.bindEvents();
         },
 
         NUM_POINTS: 10,
-        MAX_ITERS: 2,
-        STIFFNESS: 0.05,
-        FRICTION: 0.05,
+        MAX_ITERS: 3,
+        WHITE_STR: 0.01,
+        YOLK_STR: 0.003,
+        WHITE_FRICT: 0.3,
+        YOLK_FRICT: 0.2,
         WHITES_RADIUS: 100,
-        YOLK_RADIUS: 30,
-
-        bindEvents: function() {
-            // set event listeners for your functions here
-            $(document).on('click', function() {
-                console.log(':|');
-            });
-        },
+        YOLK_RADIUS: 40,
+        INIT_SPEED: 10,
 
         createEgg: function() {
             this.path = this.createWhites();
@@ -85,29 +81,33 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
             this.masses = [];
             var segments = this.path.segments;
             for (var i = 0; i < segments.length; i++) {
-                var mass = new IMPREGG.Mass(segments[i].point, i);
-                mass.setVelocity(new Point(Math.random(),Math.random())*3);
+                var mass = new IMPREGG.Mass(segments[i].point, i, this.WHITE_FRICT);
+                mass.setVelocity(this.randomVelocity(this.INIT_SPEED));
                 this.masses.push(mass);
             }
-            mass = new IMPREGG.Mass(this.yolk.position, this.NUM_POINTS);
-            mass.setVelocity(new Point(Math.random(),Math.random())*3);
+            mass = new IMPREGG.Mass(this.yolk.position, this.NUM_POINTS, this.YOLK_FRICT);
+            mass.setVelocity(this.randomVelocity(this.INIT_SPEED));
             this.masses.push(mass);
+        },
+
+        randomVelocity: function(initSpeed) {
+            return new Point(Math.random()-0.5,Math.random()-0.5)*initSpeed;
         },
 
         createSprings: function() {
             var springs = [];
             var nPnts = this.NUM_POINTS;
             for (var i = 0; i < nPnts; i++) {
-                springs.push(this.createSpring(i, (i+1) % nPnts));
-                springs.push(this.createSpring(i, (i+2) % nPnts));
-                springs.push(this.createSpring(i, nPnts));
+                springs.push(this.createSpring(i, (i+1) % nPnts, this.WHITE_STR));
+                springs.push(this.createSpring(i, (i+2) % nPnts, this.WHITE_STR));
+                springs.push(this.createSpring(i, nPnts, this.YOLK_STR));
             }
             this.springs = springs;
         },
 
-        createSpring: function(aID, bID) {
+        createSpring: function(aID, bID, strength) {
             var length = (this.getPoint(aID) - this.getPoint(bID)).length;
-            return new IMPREGG.Spring(aID, bID, length, this.STIFFNESS);
+            return new IMPREGG.Spring(aID, bID, length, strength);
         },
 
         getPoint: function(ID) {
@@ -131,28 +131,39 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         },
 
         update: function() {
-            var nPnts = this.NUM_POINTS
+            var nPnts = this.NUM_POINTS;
             for (var i = 0; i <= nPnts; i++) {
                 this.masses[i].update(this);
             }
             for (var iter = 0; iter < this.MAX_ITERS; iter++) {
                 for (var i = 0; i < this.springs.length; i++) {
-
-            // console.log("spring " + i +" "+ this.springs[i]);
                     this.springs[i].update(this);
+                }
+                for (var i = 0; i < nPnts; i++) {
+                    this.masses[i].collide(this, view.center, this.PAN_RADIUS);
                 }
             }
             this.path.smooth();
         },
+
+        jiggle: function() {
+            var nPnts = this.NUM_POINTS;
+            var totalVel = this.randomVelocity(this.INIT_SPEED);
+            for (var i = 0; i <= nPnts; i++) {
+                this.masses[i].setVelocity(this.randomVelocity(this.INIT_SPEED)+totalVel);
+            }
+        }
     };
 
     //uncomment this to test;
     EGG.init();
-    // offFrame();
-    // console.log(EGG.springs);
 
     function onFrame(event) {
         EGG.update();
+    }
+
+    function onMouseDown(event) {
+        EGG.jiggle();
     }
 
 // })(jQuery, window, document);
