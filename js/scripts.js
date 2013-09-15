@@ -291,20 +291,31 @@ var boids = [];
 var groupTogether = false;
 
 // Add the boids:
-for (var i = 0; i < 30; i++) {
-    var rad = panRad; //Set to radius of pan
-    var angle = Math.random() * 2 * Math.PI;
-    var x = Math.cos(angle) * rad;
-    var y = Math.sin(angle) * rad;
-    // console.log("radius: " + pan.radius);
-    // console.log(x);
-    // console.log(y);
-    var point2 = new Point(x, y);
-    var position = view.center + point2;
-    // console.log("center = " + view.center.toString());
-    // console.log("position = " + position.toString());
-    boids.push(new Boid(position, 10, 0.05));
-}
+var tadpolesAppear = $.Deferred();
+
+tadpolesAppear.done(function() {
+	console.log('drawing tadpoles');
+
+	var timeToWaitBeforeTadpolesPopup = 10000;
+	
+	setTimeout(function() {
+		for (var i = 0; i < 30; i++) {
+		    var rad = panRad; //Set to radius of pan
+		    var angle = Math.random() * 2 * Math.PI;
+		    var x = Math.cos(angle) * rad;
+		    var y = Math.sin(angle) * rad;
+		    // console.log("radius: " + pan.radius);
+		    // console.log(x);
+		    // console.log(y);
+		    var point2 = new Point(x, y);
+		    var position = view.center + point2;
+		    // console.log("center = " + view.center.toString());
+		    // console.log("position = " + position.toString());
+		    boids.push(new Boid(position, 10, 0.05));
+		}
+	}, timeToWaitBeforeTadpolesPopup);
+});
+
 
 
 function onFrame(event) {
@@ -420,7 +431,8 @@ var drawShell = function() {
 
 
 	var points1 = [cornerP1, endP1, centerP1, centerP2, endP2];
-	var points2 = [cornerP2, endP4, centerP4, centerP2, endP2];
+	// var points2 = [cornerP2, endP4, centerP4, centerP2, endP2];
+	var points2 = [cornerP2, endP4, centerP4, centerP3, centerP1, centerP2, endP2];
 	var points3 = [cornerP3, endP3, centerP3, centerP1, endP1];
 	var points4 = [cornerP4, endP3, centerP3, centerP4, endP4];
 	
@@ -440,9 +452,9 @@ var drawShellChunk = function(points) {
 		point = points[i];
 		path.add(point);
 	}
-	path.fillColor = new Color(0,0,0,0.5);
-	path.strokeColor = '#fff';
-	path.strokeWidth = 1;
+	path.fillColor = new Color(0,0,0,1);
+	// path.strokeColor = '#fff';
+	// path.strokeWidth = 1;
 
 	return path;
 }
@@ -473,7 +485,7 @@ var drawCracks = function() {
 	for (var i = 0; i < points.length - 1; i++) {
 		var path = new Path.Line(points[i], points[i+1]);
 		path.strokeColor = '#fff';
-		path.strokeWidth = 2;
+		path.strokeWidth = 1;
 
 		cracks.push(path);
 	}
@@ -486,15 +498,35 @@ var drawCracks = function() {
 	// path.strokeColor = '#fff';
 }
 
+
 var unveilPan = function() {
-	for (var i = 0; i < cracks.length; i++) {
-		cracks[i].remove();
-	}
-	shell.remove();
+	// for (var i = 0; i < cracks.length; i++) {
+	// 	cracks[i].remove();
+	// }
+	//shell.remove();
+	
+	for (var i = 0; i < shell.length; i++) (function(n) {
+
+		var randomNum = (i === 0) ? 0 : randomInt(100, 2000);
+
+		setTimeout(function() {
+			shell[n].remove();
+			if (n === shell.length - 1) {
+				tadpolesAppear.resolve();
+			}
+
+			for (var i = 0; i < cracks.length; i++) {
+				cracks[i].remove();
+			}
+
+		}, randomNum);
+
+		
+	})(i);
 }
 
 
-drawShell();
+shell = drawShell();
 
 console.log(view.size.width);
 
