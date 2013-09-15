@@ -27,6 +27,7 @@ app.configure(function(){
   app.use(express.errorHandler());
 });
 
+app.get("/", function(req, res) { res.redirect("/index.html");});
 
 var server = http.createServer(app);
 
