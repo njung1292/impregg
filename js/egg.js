@@ -135,6 +135,18 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
             }
         },
 
+        getYolkPos: function() {
+            return this.yolk.position;
+        },
+
+        setYolkPos: function(point) {
+            this.yolk.position = new Point(point);
+        },
+
+        getYolkRad: function() {
+            return (this.yolk.position - this.yolk.firstSegment.point).length;
+        },
+
         initEgg: function () {
             this.path.scale(10);
             this.path.smooth();
