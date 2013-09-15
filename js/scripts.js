@@ -160,7 +160,7 @@ var Boid = Base.extend({
 	// We accumulate a new acceleration each time based on three rules
 	flock: function(boids) {
 		this.calculateDistances(boids);
-		var separation = this.separate(boids) * 2;
+		var separation = this.separate(boids);
 		// var alignment = this.align(boids);	
 		var cohesion = this.cohesion(boids);
 		this.acceleration += cohesion + separation; //+ alignment + separation
@@ -232,7 +232,7 @@ var Boid = Base.extend({
 	// the target
 	steer: function(target, slowdown) {
 		slowdown = true;
-		var steer, desired = view.center - IMPREGG.EGG.yolk.position;
+		var steer, desired = IMPREGG.EGG.yolk.position- this.position;
 			// desired = view.center - this.position;
 		var distance = desired.length;
 		// Two options for desired vector magnitude
@@ -438,11 +438,11 @@ var moveback = false;
 
 // }
 //////////////////////////////////////////////////////////////////////////////////////////////
-var pepper = new Raster("images/pepper.png")
-pepper.scale(0.2);
-pepper.position = new Point(0.9 * view.size.width, view.size.height/2);
-console.log("x: " + pepper.position.x);
-console.log("y: " + pepper.position.y);
+// var pepper = new Raster("images/pepper.png")
+// pepper.scale(0.2);
+// pepper.position = new Point(0.9 * view.size.width, view.size.height/2);
+// console.log("x: " + pepper.position.x);
+// console.log("y: " + pepper.position.y);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
