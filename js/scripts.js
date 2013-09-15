@@ -372,7 +372,17 @@ var Boid = Base.extend({
 
 var handle = Project.importJSON('["Path",{"pathData":"M154.281,557.935c-4.539,4.829-12.133,5.064-16.962,0.525l-52.501-49.348c-4.829-4.539-5.064-12.133-0.525-16.962l266.531-283.558c4.539-4.829,12.133-5.064,16.962-0.525l52.501,49.348c4.829,4.539,5.064,12.133,0.525,16.962L154.281,557.935z","fillColor":"#888"}]');
 
-handle.position += new Point(40,160);
+var rad = panRad; //Set to radius of pan
+var angle = 155 / 360 * 2 * Math.PI;
+var x = Math.cos(angle) * rad;
+var y = Math.sin(angle) * rad;
+// console.log("radius: " + pan.radius);
+// console.log(x);
+// console.log(y);
+var point = new Point(x - rad / 2, y);
+var position1 = view.center + point;
+    
+handle.position = position1;
 handle.rotate(25);
 handle.scale(0.75);
 var leg = Project.importJSON('["Path",{"pathData":"M154.281,557.935c-4.539,4.829-12.133,5.064-16.962,0.525l-52.501-49.348c-4.829-4.539-5.064-12.133-0.525-16.962l266.531-283.558c4.539-4.829,12.133-5.064,16.962-0.525l52.501,49.348c4.829,4.539,5.064,12.133,0.525,16.962L154.281,557.935z","fillColor":"#FECD64"}]');
@@ -429,10 +439,38 @@ function onResize(event) {
 	pathLength = heartPath.length;
 }
 
+function displaySalt(event) {
+    for (var i = 0; i < 4; i++) (function(n) {
+        var position = event.point;
+        var point = new Point(position.x + randomInt(-11, 11), position.y + randomInt(-11, 11));
+        var size = new Size(3, 3);
+        var square = new Shape.Rectangle(point, size);
+        square.fillColor = 'white';
+        setTimeout(function() {
+            square.remove();
+        }, randomInt(1000, 2000));
+    })(i);
+}
+
+function displayPepper(event) {
+    for (var i = 0; i < 4; i++) (function(n) {
+        var position = event.point;
+        var point = new Point(position.x + randomInt(-11, 11), position.y + randomInt(-11, 11));
+        var size = new Size(3, 3);
+        var square = new Shape.Rectangle(point, size);
+        square.fillColor = "#6C5319";
+        setTimeout(function() {
+            square.remove();
+        }, randomInt(1000, 2000));
+    })(i);
+}
+
 function onMouseDown(event) {
     
     var position = event.point;
 	boids.push(new Boid(position, 10, 0.05));
+    displaySalt(event);
+    displayPepper(event);
 }
 
 
