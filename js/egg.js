@@ -6,14 +6,14 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         init: function() {
             this.createEgg();
             this.createMasses();
+            this.createSprings();
             this.bindEvents();
-            this.yolk.position = view.center - new Point(100, 100);
         },
 
-        NUMBER_OF_POINTS: 10,
+        NUM_POINTS: 10,
         MAX_ITERS: 3,
         STIFFNESS: 0.5,
-        FRICTION: 1,
+        FRICTION: 0.15,
         WHITES_RADIUS: 100,
         YOLK_RADIUS: 30,
 
@@ -27,7 +27,6 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         createEgg: function() {
             this.path = this.createWhites();
             this.yolk = this.createYolk();
-            this.springs = this.createSprings();
         },
 
         createWhites: function() {
@@ -37,10 +36,10 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
             });
             var center = view.center;
             var delta = new Point(this.WHITES_RADIUS, 0);
-            for (var i = 0; i < this.NUMBER_OF_POINTS; i++) {
+            for (var i = 0; i < this.NUM_POINTS; i++) {
                 var segment = path.add(center + delta);
                 var point = segment.point;
-                delta.angle += 360 / this.NUMBER_OF_POINTS;
+                delta.angle += 360 / this.NUM_POINTS;
             }
             path.smooth();
             return path;
@@ -53,7 +52,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         },
 
         createSprings: function() {
-            var springs = [];
+            springs = [];
             var segments = this.path.segments;
             for (var i = 0; i < segments.length; i++) {
                 var segment = segments[i];
@@ -65,7 +64,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
                 var b = this.yolk.position;
                 springs.push(this.createSpring(a,b));
             }
-            return springs;
+            this.springs = springs;
         },
 
         createSpring: function(a, b) {
@@ -76,38 +75,52 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
             this.masses = [];
             var segments = this.path.segments;
             for (var i = 0; i < segments.length; i++) {
-                var segment = segments[i];
-                var p = segment.point;
-                var newMass = new IMPREGG.Mass(p, this.FRICTION);
-                this.masses.push(newMass);
+                var p = new Point(segments[i].point);
+                p.oldPos = new Point(p) + new Point(Math.random(),Math.random())*3;
+                this.masses.push(p);
             }
-            this.masses.push(new IMPREGG.Mass(this.yolk.position, this.FRICTION));
+            p = this.yolk.position;
+            p.oldPos = new Point(p) + new Point(Math.random(),Math.random())*3;
+            this.masses.push(p);
         },
 
         update: function() {
-
-            //this.masses[0].pos.x += 1;
-            for (var i = 0; i < this.masses.length; i++) {
-                var mass = this.masses[i];
-                mass.update();
+            this.masses[this.NUM_POINTS] = this.updatePoint(this.masses[this.NUM_POINTS]);
+            this.yolk.position = this.masses[this.NUM_POINTS];
+            for (var i = 1; i < this.NUM_POINTS; i++) {
+                this.masses[i] = this.updatePoint(this.masses[i]);
+                this.path.segments[i-1].point = this.masses[i];
             }
 
             for (var i = 0; i < this.springs.length; i++) {
-                var spring = this.springs[i];
-                spring.update();
+                this.springs[i] = this.springs[i].update();
+                // this.spring[i].update;
+
             }
 
             this.path.smooth();
+        },
+
+        updatePoint: function(point){
+            var tempPos = point;
+            var velocity = point - point.oldPos;
+            if (velocity.length > this.FRICTION) {
+                var frictionForce = new Point(1, 0);
+                frictionForce.angle = velocity.angle;
+                frictionForce *= this.FRICTION;
+                velocity -= frictionForce;
+                point += velocity;
+            }
+            point.oldPos = tempPos;
+            return point;
         }
     };
 
     //uncomment this to test;
     EGG.init();
 
-
     function onFrame(event) {
         EGG.update();
-        console.log("8D");
     }
 
 // })(jQuery, window, document);

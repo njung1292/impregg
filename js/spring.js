@@ -21,6 +21,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
             var adjustment = delta * difference * this.strength / 2;
             this.a += adjustment;
             this.b -= adjustment;
+            return this;
         }
     }
 // })(jQuery, window, document);
