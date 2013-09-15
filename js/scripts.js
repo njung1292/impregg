@@ -2,6 +2,7 @@ var unveiled = false;
 var startEggAnimation = false;
 var startEggMouseDown = false;
 
+
 var panRad = (view.size.height /2) -10;
 // The pan is a circle
 var pan = new Path.Circle({
@@ -543,6 +544,17 @@ var drawCracks = function() {
 	$(name)[0].play();
 }
 
+var noelleRandom = randomInt(3500, 12000);
+var startNoelleSizzle = function() {
+	// while (true) {
+	noelleRandom = randomInt(3500, 12000);
+	setTimeout(function() {
+		$('.noelle-sizzle-sound')[0].play();
+		startNoelleSizzle();
+	}, noelleRandom);	
+	// }
+}
+
 
 var unveilPan = function() {
 
@@ -569,8 +581,13 @@ var unveilPan = function() {
 		if (i === 0) {
 			IMPREGG.EGG.init();
 			startEggAnimation = true;
-			this.setTimeout(function() {
+			setTimeout(function() {
 				startEggMouseDown = true;
+				$('.david-sizzle-sound')[0].play();
+
+				//startDavidSizzle();
+				startNoelleSizzle();
+
 			}, 1000);
 		}
 
