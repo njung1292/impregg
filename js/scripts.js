@@ -544,19 +544,33 @@ var drawCracks = function() {
 	$(name)[0].play();
 }
 
-var noelleRandom = randomInt(3500, 12000);
+
 var startNoelleSizzle = function() {
-	// while (true) {
-	noelleRandom = randomInt(3500, 12000);
+	// (function(randomNumber) {
 	setTimeout(function() {
 		$('.noelle-sizzle-sound')[0].play();
+		console.log('noelle sizzled');
+		startDavidSizzle();
+	}, randomInt(5000, 12000));	
+	// })(noelleRandom);
+	// noelleRandom = randomInt(6000, 14000);
+}
+
+var startDavidSizzle = function() {
+	// (function(randomNumber) {
+	setTimeout(function() {
+		$('.david-sizzle-sound')[0].play();
+		console.log('david sizzled');
 		startNoelleSizzle();
-	}, noelleRandom);	
-	// }
+	}, randomInt(5000, 12000));	
+	// })(davidRandom);
+	// davidRandom = randomInt(6000, 14000);
 }
 
 
 var unveilPan = function() {
+
+	console.log('unveiling pan');
 
 	for (var i = 0; i < cracks.length; i++) {
 		cracks[i].remove();
@@ -573,21 +587,23 @@ var unveilPan = function() {
 	// }
 	//shell.remove();
 
-	
+
+	var hasBeenSeen = false;
 	for (var i = 0; i < shell.length; i++) (function(n) {
 
 		var randomNum = (i === 0) ? 0 : randomInt(100, 1000);
 
-		if (i === 0) {
+		if (i === 0 || !hasBeenSeen) {
+			hasBeenSeen = true;
 			IMPREGG.EGG.init();
 			startEggAnimation = true;
+			$('.slosh-sound')[0].play();
 			setTimeout(function() {
+				console.log('playing sounds');
 				startEggMouseDown = true;
-				$('.david-sizzle-sound')[0].play();
-
-				//startDavidSizzle();
+				$('.sizzle1-sound')[0].play();
+				startDavidSizzle();
 				startNoelleSizzle();
-
 			}, 1000);
 		}
 

@@ -192,6 +192,10 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
                     this.masses[i].setVelocity(force);
                 }
                 this.masses[this.NUM_POINTS].setVelocity(force);
+                return true;
+            }
+            else {
+                return false;
             }
         }
     };
