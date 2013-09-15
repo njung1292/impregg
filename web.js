@@ -24,9 +24,14 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(allowCrossDomain);
   app.use(app.router);
-  app.use(express.static(path.join(__dirname)));
+  app.use("/", express.static(__dirname));
   app.use(express.errorHandler());
 });
+
+
+
+// app.use(express.static(path.join(__dirname)));
+// app.get("/", function(req, res) { res.redirect("/index.html");});
 
 
 //boot
