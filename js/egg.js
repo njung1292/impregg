@@ -78,7 +78,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 
         createYolk: function() {
             var circle = new Path.Circle(view.center, this.YOLK_RADIUS);
-            circle.fillColor = new Color(255,255,0,0.92);
+            circle.fillColor = new Color('#FABE28',0.88);
             return circle;
         },
 
