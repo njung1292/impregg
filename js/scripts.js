@@ -128,7 +128,7 @@ var Boid = Base.extend({
 		this.head = new Path.Ellipse({
 			from: [0,0],
 			to: [13, 8],
-			fillColor: 'white'
+			fillColor: '#FAEBD7'
 		});
 		// this.head = (project.symbols[0]
 		// 	? project.symbols[0]
@@ -138,12 +138,12 @@ var Boid = Base.extend({
 		// 		fillColor: 'white'
 		// 	}))).place();
 		this.path = new Path({
-			strokeColor: 'white',
+			strokeColor: '#FAEBD7',
 			strokeWidth: 2,
 			strokeCap: 'round'
 		});
 		this.shortPath = new Path({
-			strokeColor: 'white',
+			strokeColor: '#FAEBD7',
 			strokeWidth: 4,
 			strokeCap: 'round'
 		});
@@ -162,10 +162,10 @@ var Boid = Base.extend({
 	// We accumulate a new acceleration each time based on three rules
 	flock: function(boids) {
 		this.calculateDistances(boids);
-		var separation = this.separate(boids);
+		var separation = this.separate(boids)*2;
 		// var alignment = this.align(boids);	
 		var cohesion = this.cohesion(boids);
-		this.acceleration += cohesion + separation; //+ alignment + separation
+		this.acceleration += (cohesion) + separation; //+ alignment + separation
 	},
 
 	calculateDistances: function(boids) {
@@ -202,6 +202,14 @@ var Boid = Base.extend({
 		// }
 	},
 
+	getBoidPos: function() {
+		return this.position;
+	},
+
+	setBoidPos: function(point) {
+		this.position = new Point(point);
+	},
+
 	seek: function(target) {
 		this.acceleration += this.steer(target, true);
 	},
@@ -234,7 +242,7 @@ var Boid = Base.extend({
 	// the target
 	steer: function(target, slowdown) {
 		slowdown = true;
-		var steer, desired = IMPREGG.EGG.yolk.position- this.position;
+		var steer, desired = IMPREGG.EGG.getYolkPos() - this.position;
 			// desired = view.center - this.position;
 		// var steer,
 		// 	desired = view.center - this.position;
@@ -826,6 +834,23 @@ function onFrame(event) {
 				boids[i].arrive(point);
 		}
 		boids[i].run(boids);
+	}
+
+	var MAX_ITERS = 3;
+	for (var iter = 0; iter < MAX_ITERS; iter++) {
+		for (var i = 0; i < boids.length; i++) {
+			var yolkPos = IMPREGG.EGG.getYolkPos();
+			var yolkRad = IMPREGG.EGG.getYolkRad();
+			var boidPos = boids[i].getBoidPos();
+			var vecToYolk = yolkPos - boidPos;
+			var vecToPan = view.center - boidPos;
+			if (vecToYolk.length < yolkRad) {
+				boids[i].setBoidPos(yolkPos - vecToYolk.normalize(yolkRad));
+			}
+			if (vecToPan.length > panRad) {
+				boids[i].setBoidPos(view.center - vecToPan.normalize(panRad));
+			}
+		}
 	}
 
 	if (startEggAnimation) {
