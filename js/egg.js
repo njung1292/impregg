@@ -49,6 +49,8 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
         WHITES_RADIUS: 100,
         YOLK_RADIUS: 40,
         INIT_SPEED: 10,
+        JIGGLE_AMOUNT: 3,
+        CLICK_FORCE: 0.7,
 
         createEgg: function() {
             this.path = this.createWhites();
@@ -148,10 +150,28 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
 
         jiggle: function() {
             var nPnts = this.NUM_POINTS;
-            var totalVel = this.randomVelocity(this.INIT_SPEED);
+            var totalVel = this.randomVelocity(this.JIGGLE_AMOUNT);
             for (var i = 0; i <= nPnts; i++) {
-                this.masses[i].setVelocity(this.randomVelocity(this.INIT_SPEED)+totalVel);
+                this.masses[i].setVelocity(this.randomVelocity(this.JIGGLE_AMOUNT)+totalVel);
             }
+        },
+
+        pushYolk: function(point) {
+            if (this.yolk.hitTest(point, {fill: true})) {
+                this.jiggle();
+                var yolkPos = new Point(this.yolk.position - point);
+                var yolkInvPos = this.YOLK_RADIUS - yolkPos.length;
+                var force = yolkPos.normalize(Math.sqrt(yolkInvPos)) * this.CLICK_FORCE;
+                for (var i = 0; i < this.NUM_POINTS; i++) {
+                    this.masses[i].setVelocity(force);
+                }
+                this.masses[this.NUM_POINTS].setVelocity(force);
+            }
+        },
+
+        pull: function(point) {
+            var force = this.yolk.position;
+
         }
     };
 
@@ -163,7 +183,7 @@ window.IMPREGG || (IMPREGG = {}); //define a namespace
     }
 
     function onMouseDown(event) {
-        EGG.jiggle();
+        EGG.pushYolk(event.point);
     }
 
 // })(jQuery, window, document);
