@@ -210,10 +210,10 @@ var Boid = Base.extend({
 	// We accumulate a new acceleration each time based on three rules
 	flock: function(boids) {
 		this.calculateDistances(boids);
-		var separation = this.separate(boids) * 3;
+		var separation = this.separate(boids) * 2;
 		var alignment = this.align(boids);	
 		var cohesion = this.cohesion(boids);
-		this.acceleration += cohesion + separation; //+ alignment + separation
+		this.acceleration += cohesion + separation + alignment; //+ alignment + separation
 	},
 
 	calculateDistances: function(boids) {
@@ -235,19 +235,19 @@ var Boid = Base.extend({
 		// console.error(view.center.x);
 		// console.error(this.position.x);
 
-		if (diff < 30 && diff < 30) {
-			boids[12].head.fillColor = 'red';
-			boids[12].path.strokeColor = 'red';
-			boids[12].shortPath.strokeColor = 'red';
+		// if (diff < 30 && diff < 30) {
+		// 	boids[12].head.fillColor = 'red';
+		// 	boids[12].path.strokeColor = 'red';
+		// 	boids[12].shortPath.strokeColor = 'red';
 
 			// var i = boids.indexOf(this);
 			// var tmp = boids[i];
-			this.head.remove();
-			this.path.remove();
-			this.shortPath.remove();
+			// this.head.remove();
+			// this.path.remove();
+			// this.shortPath.remove();
 			// boids = boids.slice(i, i+1);
 			// console.log("new length: " + boids.length);
-		}
+		// }
 	},
 
 	seek: function(target) {
@@ -281,7 +281,7 @@ var Boid = Base.extend({
 	// Takes a second argument, if true, it slows down as it approaches
 	// the target
 	steer: function(target, slowdown) {
-		slowdown = true;
+		// slowdown = true;	
 		var steer,
 			desired = view.center - this.position;
 		var distance = desired.length;
@@ -289,7 +289,7 @@ var Boid = Base.extend({
 		// (1 -- based on distance, 2 -- maxSpeed)
 		if (slowdown && distance < 100) {
 			// This damping is somewhat arbitrary:
-			desired.length = this.maxSpeed * (distance * 0.001);
+			desired.length = this.maxSpeed * (distance * 0.01);
 		} else {
 			desired.length = this.maxSpeed;
 		}
@@ -458,20 +458,6 @@ function onKeyDown(event) {
 		console.error(boids.length)
 	}
 	if (event.key == 'z') {
-		doanim=true;
-		var delat = new Point(-30,60);
-		var neg = new Point(30,-60);
-		pan.translate(delat);
-		spiral.translate(delat);
-		spiral.translate(neg);
-		pan.translate(neg);
-	}
-	if (event.key == 'x') {
-		var delat = new Point(30,-60);
-		var neg = new Point(-30,60);
-		spiral.translate(delat);
-		pan.translate(delat);
-		spiral.translate(neg);
-		pan.translate(neg);
+		groupTogether = true;
 	}
 }
