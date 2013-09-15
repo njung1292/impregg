@@ -155,14 +155,21 @@ var Boid = Base.extend({
 		this.position += this.vector;
 		// Reset acceleration to 0 each cycle
 		this.acceleration = new Point();
+		var diff = this.position - view.center;
+		if ((Math.abs(diff.x) < 1) && Math.abs(diff.y) < 1) {
+			var i = boids.indexOf(this);
+			// console.error(i);
+			// boids.splice(i,1);
+		}
 	},
 
 	seek: function(target) {
-		this.acceleration += this.steer(target, false);
+		this.acceleration += this.steer(target, true);
 	},
 
 	arrive: function(target) {
-		this.acceleration += this.steer(target, true);
+		this.acceleration += this.steer(target, false);
+
 	},
 
 	borders: function() {
@@ -187,6 +194,7 @@ var Boid = Base.extend({
 	// Takes a second argument, if true, it slows down as it approaches
 	// the target
 	steer: function(target, slowdown) {
+		slowdown = true;
 		var steer,
 			desired = view.center - this.position;
 		var distance = desired.length;
@@ -264,7 +272,7 @@ var Boid = Base.extend({
 		var count = 0;
 		for (var i = 0, l = boids.length; i < l; i++) {
 			var distance = this.distances[i];
-			if (distance > 0 && distance < neighborDist) {
+			if (distance >= 0 && distance < neighborDist) {
 				sum += boids[i].position; // Add location
 				count++;
 			}
@@ -290,13 +298,13 @@ for (var i = 0; i < 30; i++) {
     var angle = Math.random() * 2 * Math.PI;
     var x = Math.cos(angle) * rad;
     var y = Math.sin(angle) * rad;
-    console.log("radius: " + pan.radius);
-    console.log(x);
-    console.log(y);
+    // console.log("radius: " + pan.radius);
+    // console.log(x);
+    // console.log(y);
     var point2 = new Point(x, y);
     var position = view.center + point2;
-    console.log("center = " + view.center.toString());
-    console.log("position = " + position.toString());
+    // console.log("center = " + view.center.toString());
+    // console.log("position = " + position.toString());
     boids.push(new Boid(position, 10, 0.05));
 }
 
@@ -331,5 +339,12 @@ function onKeyDown(event) {
 		var layer = project.activeLayer;
 		layer.selected = !layer.selected;
 		return false;
+	}
+	if (event.key == 'a') {
+		var position = new Point(200,300);
+		boids.push(new Boid(position, 10, 0.05));
+
+		var pos = new Point(1100,600);
+		boids.push(new Boid(pos, 10,0.05));
 	}
 }
