@@ -1,43 +1,82 @@
-// // Create a Paper.js Path to draw a line into it:
-// var path = new Path();
-// // Give the stroke a color
-// path.strokeColor = 'black';
-// var start = new Point(100, 100);
-// // Move to start and draw a line from there
-// path.moveTo(start);
-// // Note the plus operator on Point objects.
-// // PaperScript does that for us, and much more!
-// path.lineTo(start + [ 100, -50 ]);
+var SPLASH = {
 
-// var testPath = Project.importJSON(('["Path", {"pathData":"M261.093,52.608c0,0-112.494-65.997-137.993,28.499
-// 	s44.998,59.997,41.998,119.994c-3,59.997,64.497,65.997,64.497,65.997s76.496,17.999,104.995-37.498s64.497-35.998,64.497-35.998
-// 	s76.496,28.499,43.498-55.497s-65.997-100.495-89.995-92.995C328.589,52.608,296.87,68.132,261.093,52.608z"}'));
-// testPath.strokeColor = 'black';
-// var start1 = new Point(300, 400);
-// testPath.moveTo(start1);
+	var randomInt = function(min, max) {
+		//inclusive, exclusive
+		return Math.floor(Math.random()*(max - min)+min);
+	}
 
-// // Create a circle shaped path with its center at the center
-// // of the view and a radius of 30:
-// var path = new Path.Circle({
-// 	center: view.center,
-// 	radius: 250,
-// 	strokeColor: 'black'
-// });
+	var unveiled = false;
+	var crackTaps = 0;
+	var crackLimit = randomInt(7,14);
+	var cracks = [];
+	var shell;
 
-// Create a circle shaped path with its center at the center
-// of the view and a radius of 30:
-// var circle = new Path.Circle({
-// 	center: view.center,
-// 	radius: 250,
-// 	strokeColor: 'black'
-// });
+	$('#myCanvas').on('click', function(e) {
+	    if (!unveiled) {
+	    	drawCracks();
+	    	crackTaps++;
+	    	if (crackTaps >= crackLimit) {
+	    		unveiled = true;
+	    		unveilPan();
+	    	}
+	    }
+	});
 
-// //var path = new Path.Circle(view.bounds.center, 30);
-// path.fillColor = 'red';
-
-// function onResize(event) {
-// 	// Whenever the window is resized, recenter the path:
-// 	path.position = view.center;
-// }
+	var drawShell = function() {
+		var rect = new Rectangle(new Point(0,0), view.size);
+		shell = new Path.Rectangle(rect);
+		shell.fillColor = '#000';
+	}
 
 
+	var drawCracks = function() {
+		console.log(event.pageX, event.pageY);
+		var initialX = event.pageX;
+		var initialY = event.pageY;
+
+		var numPoints = randomInt(3,14);
+		console.log(numPoints);
+
+		var points = [];
+		var centerX = initialX;
+		var centerY = initialY;
+
+		for (var i = 0; i < numPoints; i++) {
+			var x = randomInt(-70, 70);
+			var y = randomInt(-70, 70);
+			centerX += x;
+			centerY += y;
+
+			points.push(new Point(centerX, centerY));
+		}
+
+
+		for (var i = 0; i < points.length - 1; i++) {
+			var path = new Path.Line(points[i], points[i+1]);
+			path.strokeColor = '#fff';
+			path.strokeWidth = 2;
+
+			cracks.push(path);
+		}
+
+
+		// var p1 = new Point(centerX - 30, centerY - 30);
+		// var p2 = new Point(centerX + 30, centerY + 30);
+		
+		// var path = new Path.Line(p1, p2);
+		// path.strokeColor = '#fff';
+	}
+
+	var unveilPan = function() {
+		for (var i = 0; i < cracks.length; i++) {
+			cracks[i].remove();
+		}
+		shell.remove();
+	}
+
+
+	drawShell();
+
+	console.log(view.size.width);
+
+}
