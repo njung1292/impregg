@@ -15,6 +15,39 @@ var pan = new Path.Circle({
 	strokeWidth: 20
 });
 
+console.log("pan: " + pan.length);
+
+var offset = .9 * pan.length;
+var norm_point = pan.getPointAt(offset);
+console.log("offset: " + offset);
+var normal = pan.getNormalAt(offset);
+normal.length = panRad * 2;
+
+// var line = new Path({
+// 	segments: [norm_point, norm_point + normal],
+// 	strokeWidth: 80,
+// 	strokeColor: '#FECD64'
+// });
+// line.smooth();
+
+var rectangle = new Rectangle( {
+	point: norm_point,
+	size: new Size(panRad * 2, 80)
+});
+var cornerSize = new Size(10,10);
+var handle1 = new Path.Rectangle(rectangle, cornerSize);
+
+handle1.fillColor = '#FECD64';
+handle1.position = view.center;
+handle1.rotate(-36);
+handle1.rotate(180, norm_point);
+// var radians = (Math.PI/180) * (-36)
+// var x = Math.cos(radians) * panRad;
+// var y = Math.sin(radians) * panRad;
+// var point2 = new Point(x, y);
+// var position = view.center - point2;
+// handle1.position = position;
+
 var count = 0;
 var position = view.center;
 var spiral = new Path({
@@ -292,7 +325,23 @@ var Boid = Base.extend({
 	}
 });
 
-var handle = Project.importJSON('["Path",{"pathData":"M154.281,557.935c-4.539,4.829-12.133,5.064-16.962,0.525l-52.501-49.348c-4.829-4.539-5.064-12.133-0.525-16.962l266.531-283.558c4.539-4.829,12.133-5.064,16.962-0.525l52.501,49.348c4.829,4.539,5.064,12.133,0.525,16.962L154.281,557.935z","fillColor":"#888"}]');
+// var rectangle = new Rectangle({
+// 	point: new Point(view.center.x - (panRad * Math.cos((2 * Math.PI)/3)), view.center.y),
+// 	size: new Size(panRad * 2, panRad/4)
+// });
+// console.log("rec - x: " + rectangle.point.x);
+// var cornerSize = new Size(10, 10);
+// var handle_top = new Path.Rectangle(rectangle, cornerSize);
+// handle_top.fillColor = '#FECD64';
+
+// var handle = Project.importJSON('["Path",{"pathData":"M154.281,557.935c-4.539,4.829-12.133,5.064-16.962,0.525l-52.501-49.348c-4.829-4.539-5.064-12.133-0.525-16.962l266.531-283.558c4.539-4.829,12.133-5.064,16.962-0.525l52.501,49.348c4.829,4.539,5.064,12.133,0.525,16.962L154.281,557.935z","fillColor":"#888"}]');
+
+// handle.position += new Point(40,160);
+// handle.rotate(25);
+// handle.scale(0.75);
+
+// var handle = new Raster("images/handle1.png");
+// handle.position = new Point(view.size.width/2, view.size.height/3);
 
 var rad = panRad; //Set to radius of pan
 var angle = 155 / 360 * 2 * Math.PI;
@@ -304,12 +353,12 @@ var y = Math.sin(angle) * rad;
 var point = new Point(x - rad / 2, y);
 var position1 = view.center + point;
     
-handle.position = position1;
-handle.rotate(25);
-handle.scale(0.75);
-var leg = Project.importJSON('["Path",{"pathData":"M154.281,557.935c-4.539,4.829-12.133,5.064-16.962,0.525l-52.501-49.348c-4.829-4.539-5.064-12.133-0.525-16.962l266.531-283.558c4.539-4.829,12.133-5.064,16.962-0.525l52.501,49.348c4.829,4.539,5.064,12.133,0.525,16.962L154.281,557.935z","fillColor":"#FECD64"}]');
-leg.position += new Point(-60,200);
-leg.rotate(25);
+// handle.position = position1;
+// handle.rotate(25);
+// handle.scale(0.75);
+// var leg = Project.importJSON('["Path",{"pathData":"M154.281,557.935c-4.539,4.829-12.133,5.064-16.962,0.525l-52.501-49.348c-4.829-4.539-5.064-12.133-0.525-16.962l266.531-283.558c4.539-4.829,12.133-5.064,16.962-0.525l52.501,49.348c4.829,4.539,5.064,12.133,0.525,16.962L154.281,557.935z","fillColor":"#FECD64"}]');
+// leg.position += new Point(-60,200);
+// leg.rotate(25);
 
 var heartPath = Project.importJSON('["Path",{"pathData":"M514.69629,624.70313c-7.10205,-27.02441 -17.2373,-52.39453 -30.40576,-76.10059c-13.17383,-23.70703 -38.65137,-60.52246 -76.44434,-110.45801c-27.71631,-36.64355 -44.78174,-59.89355 -51.19189,-69.74414c-10.5376,-16.02979 -18.15527,-30.74951 -22.84717,-44.14893c-4.69727,-13.39893 -7.04297,-26.97021 -7.04297,-40.71289c0,-25.42432 8.47119,-46.72559 25.42383,-63.90381c16.94775,-17.17871 37.90527,-25.76758 62.87354,-25.76758c25.19287,0 47.06885,8.93262 65.62158,26.79834c13.96826,13.28662 25.30615,33.10059 34.01318,59.4375c7.55859,-25.88037 18.20898,-45.57666 31.95215,-59.09424c19.00879,-18.32178 40.99707,-27.48535 65.96484,-27.48535c24.7373,0 45.69531,8.53564 62.87305,25.5957c17.17871,17.06592 25.76855,37.39551 25.76855,60.98389c0,20.61377 -5.04102,42.08691 -15.11719,64.41895c-10.08203,22.33203 -29.54687,51.59521 -58.40723,87.78271c-37.56738,47.41211 -64.93457,86.35352 -82.11328,116.8125c-13.51758,24.0498 -23.82422,49.24902 -30.9209,75.58594z","strokeWidth":2,"strokeCap":"round"}]');
 var pathLength = heartPath.length;
@@ -320,18 +369,18 @@ var groupTogether = false;
 //Add the boids:
 function addBoids (int) {
 	for (var i = 0; i < int; i++) {
-    var rad = panRad; //Set to radius of pan
-    var angle = Math.random() * 2 * Math.PI;
-    var x = Math.cos(angle) * rad;
-    var y = Math.sin(angle) * rad;
-    // console.log("radius: " + pan.radius);
-    // console.log(x);
-    // console.log(y);
-    var point2 = new Point(x, y);
-    var position = view.center + point2;
-    // console.log("center = " + view.center.toString());
-    // console.log("position = " + position.toString());
-    boids.push(new Boid(position, 10, 0.05));
+	    var rad = panRad; //Set to radius of pan
+	    var angle = Math.random() * 2 * Math.PI;
+	    var x = Math.cos(angle) * rad;
+	    var y = Math.sin(angle) * rad;
+	    // console.log("radius: " + pan.radius);
+	    // console.log(x);
+	    // console.log(y);
+	    var point2 = new Point(x, y);
+	    var position = view.center + point2;
+	    // console.log("center = " + view.center.toString());
+	    // console.log("position = " + position.toString());
+	    boids.push(new Boid(position, 10, 0.05));
 	}
 }
 
@@ -390,6 +439,16 @@ var moveback = false;
 // 	}
 
 // }
+//////////////////////////////////////////////////////////////////////////////////////////////
+var pepper = new Raster("images/pepper.png")
+pepper.scale(0.2);
+pepper.position = new Point(0.9 * view.size.width, view.size.height/2);
+console.log("x: " + pepper.position.x);
+console.log("y: " + pepper.position.y);
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 
 // Reposition the heart path whenever the window is resized:
 function onResize(event) {
@@ -848,13 +907,3 @@ function onFrame(event) {
 // 	initializePath();
 // }
 
-
-// var diff = this.position - view.center;
-// 		var outsideOfPan = Math.pow((this.position.x - view.center), 2) + Math.pow((this.position.y - view.center), 2) > Math.pow(panRad, 2) 
-//         console.log("diff = " + diff);
-//         console.log("outside = " + outsideOfPan);
-//         if ((Math.abs(diff.x) < 1) && (Math.abs(diff.y) < 1) && (!outsideOfPan)) {
-// 			var i = boids.indexOf(this);
-// 			// console.error(i);
-// 			boids.splice(i,1);
-// 		}
