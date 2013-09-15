@@ -1,4 +1,78 @@
 var unveiled = false;
+var crackTaps = 0;
+var crackLimit = randomInt(7,14);
+var cracks = [];
+var shell;
+
+$('#myCanvas').on('click', function(e) {
+    if (!unveiled) {
+    	drawCracks();
+    	crackTaps++;
+    	if (crackTaps >= crackLimit) {
+    		unveiled = true;
+    		unveilPan();
+    	}
+    }
+});
+
+var drawShell = function() {
+	var rect = new Rectangle(new Point(0,0), view.size);
+	shell = new Path.Rectangle(rect);
+	shell.fillColor = '#000';
+}
+
+
+var drawCracks = function() {
+	console.log(event.pageX, event.pageY);
+	var initialX = event.pageX;
+	var initialY = event.pageY;
+
+	var numPoints = randomInt(3,14);
+	console.log(numPoints);
+
+	var points = [];
+	var centerX = initialX;
+	var centerY = initialY;
+
+	for (var i = 0; i < numPoints; i++) {
+		var x = randomInt(-70, 70);
+		var y = randomInt(-70, 70);
+		centerX += x;
+		centerY += y;
+
+		points.push(new Point(centerX, centerY));
+	}
+
+
+	for (var i = 0; i < points.length - 1; i++) {
+		var path = new Path.Line(points[i], points[i+1]);
+		path.strokeColor = '#fff';
+		path.strokeWidth = 2;
+
+		cracks.push(path);
+	}
+
+
+	// var p1 = new Point(centerX - 30, centerY - 30);
+	// var p2 = new Point(centerX + 30, centerY + 30);
+	
+	// var path = new Path.Line(p1, p2);
+	// path.strokeColor = '#fff';
+}
+
+var unveilPan = function() {
+	for (var i = 0; i < cracks.length; i++) {
+		cracks[i].remove();
+	}
+	shell.remove();
+}
+
+
+drawShell();
+
+console.log(view.size.width);
+
+////////////////////////////////////////////////////////////////////////////////////////////
 
 var panRad = (view.size.height /2) -10;
 // The pan is a circle
@@ -132,9 +206,9 @@ var Boid = Base.extend({
 	flock: function(boids) {
 		this.calculateDistances(boids);
 		var separation = this.separate(boids) * 2;
-		var alignment = this.align(boids);	
+		// var alignment = this.align(boids);	
 		var cohesion = this.cohesion(boids);
-		this.acceleration += cohesion + separation + alignment; //+ alignment + separation
+		this.acceleration += cohesion + separation; //+ alignment + separation
 	},
 
 	calculateDistances: function(boids) {
@@ -202,7 +276,7 @@ var Boid = Base.extend({
 	// Takes a second argument, if true, it slows down as it approaches
 	// the target
 	steer: function(target, slowdown) {
-		// slowdown = true;	
+		slowdown = true;
 		var steer,
 			desired = view.center - this.position;
 		var distance = desired.length;
@@ -307,6 +381,7 @@ var heartPath = Project.importJSON('["Path",{"pathData":"M514.69629,624.70313c-7
 var pathLength = heartPath.length;
 
 var boids = [];
+var colors = ["#EC6363", "#BDEBCA", "#D7F0D3", "#A1DBDD", "#FEE58C", "#FF703F", "white"];
 var groupTogether = false;
 
 // Add the boids:
@@ -354,6 +429,9 @@ function onResize(event) {
 }
 
 function onMouseDown(event) {
+    var position = event.point;
+	boids.push(new Boid(position, 10, 0.05));
+	seek(event.point);
 	if (unveiled) {
 	    var position = event.point;
 		boids.push(new Boid(position, 10, 0.05));
